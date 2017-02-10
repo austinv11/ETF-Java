@@ -811,6 +811,11 @@ public class ETFParser {
 
     //TODO: Implement advanced BERT objs
 
+    /**
+     * This gets the next generic term.
+     *
+     * @return The next term.
+     */
     @BertCompatible
     public Object next() {
         switch (peek()) {
@@ -874,6 +879,20 @@ public class ETFParser {
             default:
                 throw new ETFException("Unidentified type " + peek() + " is the data malformed?");
         }
+    }
+
+    /**
+     * This reads all of the terms in the provided etf data from the current offset.
+     *
+     * @return The list of all remaining terms.
+     */
+    public List<Object> readFully() {
+        List<Object> terms = new ArrayList<>();
+        while (!isFinished()) {
+            terms.add(next());
+        }
+
+        return terms;
     }
 
     @Override
