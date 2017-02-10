@@ -106,4 +106,5 @@ crashlytics-build.properties
 fabric.properties
 
 # Misc
-test.etf
+src/test/resources/test.etf
+/src/test/resources/test.json

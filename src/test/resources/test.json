@@ -1,0 +1,9 @@
+{
+  "s": null,
+  "t": null,
+  "op": 10,
+  "d": {
+    "_trace": [],
+    "heartbeat_interval": 41250
+  }
+}

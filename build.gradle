@@ -1,4 +1,4 @@
-group 'com.austinv11'
+group 'com.austinv11.etf'
 version '1.0.0-SNAPSHOT'
 
 apply plugin: 'java'
@@ -11,4 +11,5 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile 'org.json:json:20160810'
 }
