@@ -908,6 +908,7 @@ public class ETFParser {
         return builder.toString();
     }
 
+    //Internal use only, we don't actually provide a Node object
     private class Node {
         final String atom;
         final int ref;
