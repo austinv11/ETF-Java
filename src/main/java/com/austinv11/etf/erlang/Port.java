@@ -27,9 +27,4 @@ public class Port implements ErlangObject {
     public byte type() {
         return TermTypes.PORT_EXT;
     }
-
-    @Override
-    public byte[] toBytes() {
-        return new byte[0];
-    }
 }

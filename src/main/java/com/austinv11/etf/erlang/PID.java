@@ -31,9 +31,4 @@ public class PID implements ErlangObject {
     public byte type() {
         return TermTypes.PID_EXT;
     }
-
-    @Override
-    public byte[] toBytes() {
-        return new byte[0];
-    }
 }

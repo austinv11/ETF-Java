@@ -11,11 +11,4 @@ public interface ErlangObject {
      * @return The type.
      */
     byte type();
-
-    /**
-     * This converts an object to etf compatible bytes.
-     *
-     * @return The ETF binary bytes.
-     */
-    byte[] toBytes();
 }

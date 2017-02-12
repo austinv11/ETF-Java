@@ -15,9 +15,4 @@ public class DistributionHeader implements ErlangObject {
     public byte type() {
         return TermTypes.DISTRIBUTION_HEADER;
     }
-
-    @Override
-    public byte[] toBytes() {
-        return data;
-    }
 }

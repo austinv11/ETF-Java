@@ -13,11 +13,6 @@ public class Fun implements ErlangObject {
 
     @Override
     public byte type() {
-        return TermTypes.FUN_EXT; //TODO differentiate between new and old fun & exports
-    }
-
-    @Override
-    public byte[] toBytes() {
-        return data;
+        return TermTypes.FUN_EXT; //TODO differentiate between new, old fun & exports
     }
 }

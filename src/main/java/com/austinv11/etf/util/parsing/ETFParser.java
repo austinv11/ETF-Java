@@ -492,7 +492,7 @@ public class ETFParser {
             data[i] = next();
         }
 
-        return new Tuple(data, this);
+        return new Tuple(data);
     }
 
     /**
@@ -555,7 +555,7 @@ public class ETFParser {
             map.put(next(), next());
         }
 
-        return new ErlangMap(map, this);
+        return new ErlangMap(map);
     }
 
     /**
@@ -601,7 +601,7 @@ public class ETFParser {
             tail = next();
         }
 
-        return new ErlangList(list, tail, this);
+        return new ErlangList(list, tail);
     }
 
     /**
@@ -633,7 +633,7 @@ public class ETFParser {
         long len = Integer.toUnsignedLong(wrap(data, offset, 4).getInt());
         offset += 4;
 
-        offset++; //Ignoring number of bits for now FIXME
+        offset++; //Ignoring number of trailing bits for now FIXME
         
         byte[] bytes = wrap(data, offset, (int) len).array();
         offset += len;

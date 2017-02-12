@@ -51,9 +51,4 @@ public class Reference implements ErlangObject {
     public byte type() {
         return isNew() ? TermTypes.NEW_REFERENCE_EXT : TermTypes.REFERENCE_EXT;
     }
-
-    @Override
-    public byte[] toBytes() {
-        return new byte[0];
-    }
 }
