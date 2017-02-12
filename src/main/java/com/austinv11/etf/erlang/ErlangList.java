@@ -5,7 +5,6 @@ import com.austinv11.etf.util.BertCompatible;
 
 import java.math.BigInteger;
 import java.util.AbstractList;
-import java.util.List;
 
 /**
  * This represents an immutable ETF list.
@@ -13,25 +12,25 @@ import java.util.List;
 @BertCompatible
 public class ErlangList extends AbstractList<Object> implements ErlangObject {
 
-    private final List<Object> data;
+    private final Object[] data;
     private final Object tail;
 
-    public ErlangList(List<Object> data, Object tail) {
+    public ErlangList(Object[] data, Object tail) {
         this.data = data;
         this.tail = tail;
     }
 
     @Override
     public Object get(int index) {
-        if (index == data.size())
+        if (index == data.length)
             return tail;
 
-        return data.get(index);
+        return data[index];
     }
 
     @Override
     public int size() {
-        return isProper() ? data.size() : data.size()+1;
+        return isProper() ? data.length : data.length+1;
     }
 
     /**

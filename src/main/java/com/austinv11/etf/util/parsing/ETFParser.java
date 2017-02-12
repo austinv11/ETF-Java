@@ -588,9 +588,9 @@ public class ETFParser {
         long len = Integer.toUnsignedLong(wrap(data, offset, 4).getInt());
         offset += 4;
 
-        List<Object> list = new ArrayList<>((int) len);
-        for (long i = 0; i < len; i++) {
-            list.add(next());
+        Object[] list = new Object[(int) len];
+        for (int i = 0; i < len; i++) {
+            list[i] = next();
         }
 
         Object tail;
