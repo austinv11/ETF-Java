@@ -641,7 +641,7 @@ public class ETFParser {
             offset += 4;
 
             if (i == len-1) //Tail
-                val >>= 8-bits; //bits = # of significant bits from 1-8, so we remove the insignificant ones
+                val >>>= 8-bits; //bits = # of significant bits from 1-8, so we remove the insignificant ones
 
             bytes[i] = Integer.toUnsignedLong(val);
         }
