@@ -627,15 +627,25 @@ public class ETFParser {
      *
      * @return The binary data.
      */
-    public byte[] nextBitBinary() {
+    public long[] nextBitBinary() {
         checkPreconditions(BIT_BINARY_EXT);
 
         long len = Integer.toUnsignedLong(wrap(data, offset, 4).getInt());
         offset += 4;
 
-        offset++; //Ignoring number of trailing bits for now FIXME
+        byte bits = data[offset++];
         
-        byte[] bytes = wrap(data, offset, (int) len).array();
+        long[] bytes = new long[(int) len];
+        for (int i = 0; i < len; i++) {
+            int val = wrap(data, offset, 4).getInt();
+            offset += 4;
+
+            if (i == len-1) //Tail
+                val >>= 8-bits; //bits = # of significant bits from 1-8, so we remove the insignificant ones
+
+            bytes[i] = Integer.toUnsignedLong(val);
+        }
+        bytes[bytes.length-1] = bytes[bytes.length-1] >> 8-len;
         offset += len;
 
         return bytes;
