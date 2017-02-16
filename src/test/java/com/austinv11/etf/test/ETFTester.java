@@ -4,21 +4,72 @@ import com.austinv11.etf.util.parsing.ETFParser;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.json.JSONObject;
+import org.junit.Assert;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ETFTester {
 
-    public static void main(String[] args) throws IOException {
+    //These test cases were taken from: https://github.com/ccubed/Earl/blob/master/unit_tests.py
+    public static final char[] SMALL_INT = {131,97,10};
+    public static final char[] BIG_INT = {131, 98, 0, 0, 4, 176};
+    public static final char[] FLOAT = {131,70,64,9,33,250,252,139,0,122};
+    public static final char[] MAP = {131,116,0,0,0,1,109,0,0,0,1,100,97,10};
+    public static final char[] LIST = {131,108,0,0,0,3,97,1,97,2,97,3,106};
+    public static final char[] NIL = {131, 106};
+
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
         readEtf(ETFTester.class.getResourceAsStream("/test.etf"));
 
         readJson(ETFTester.class.getResourceAsStream("/test.json"));
 
         readGson(ETFTester.class.getResourceAsStream("/test.json"));
+
+        testCase(SMALL_INT, 10, "small int");
+        testCase(BIG_INT, 1200, "big int");
+        testCase(FLOAT, 3.141592, "float");
+        Map<String, Integer> map = new HashMap<>();
+        map.put("d", 10);
+        testCase(MAP, map, "map");
+        testCase(LIST, Arrays.asList(1,2,3), "list");
+        testCase(NIL, null, "nil");
     }
 
-    private static void readEtf(InputStream is) throws IOException {
+    private static byte[] charsToBytes(char[] chars) {
+        byte[] array = new byte[chars.length];
+        for (int i = 0; i < chars.length; i++)
+            array[i] = (byte) chars[i];
+        return array;
+    }
+
+    private static void testCase(char[] etf, Object expected, String message) {
+        Object next = new ETFParser(charsToBytes(etf), 131, false, true).next();
+        System.out.printf("Expected: %s, Parsed: %s%n", next == null ? "null" : expected.toString(), next == null ? "null" : next.toString());
+        Assert.assertTrue(message, next == null ? expected == null : next.equals(expected));
+    }
+
+    private static void readEtf(InputStream is) throws IOException, ClassNotFoundException {
+        Class.forName("com.austinv11.etf.util.parsing.ETFParser");
+        Class.forName("com.austinv11.etf.util.BertCompatible");
+        Class.forName("com.austinv11.etf.util.BertType");
+        Class.forName("com.austinv11.etf.util.ETFConstants");
+        Class.forName("com.austinv11.etf.util.ETFException");
+        Class.forName("com.austinv11.etf.erlang.DistributionHeader");
+        Class.forName("com.austinv11.etf.erlang.ErlangList");
+        Class.forName("com.austinv11.etf.erlang.ErlangMap");
+        Class.forName("com.austinv11.etf.erlang.ErlangObject");
+        Class.forName("com.austinv11.etf.erlang.Fun");
+        Class.forName("com.austinv11.etf.erlang.PID");
+        Class.forName("com.austinv11.etf.erlang.Port");
+        Class.forName("com.austinv11.etf.erlang.Reference");
+        Class.forName("com.austinv11.etf.erlang.Tuple");
+        Class.forName("com.austinv11.etf.common.TermTypes");
+
+
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
         int nRead;

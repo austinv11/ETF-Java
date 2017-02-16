@@ -259,7 +259,7 @@ public class ETFParser {
      * @return The float.
      */
     @BertCompatible
-    public float nextOldFloat() {
+    public double nextOldFloat() {
         checkPreconditions(FLOAT_EXT);
 
         return Float.parseFloat(new String(Arrays.copyOfRange(data, offset, (offset += 31))));
@@ -270,10 +270,10 @@ public class ETFParser {
      *
      * @return The float.
      */
-    public float nextNewFloat() {
+    public double nextNewFloat() {
         checkPreconditions(NEW_FLOAT_EXT, false);
 
-        float num = wrap(data, offset, 8).getFloat();
+        double num = wrap(data, offset, 8).getDouble();
 
         offset += 8;
 
@@ -285,7 +285,7 @@ public class ETFParser {
      *
      * @return The float.
      */
-    public float nextFloat() {
+    public double nextFloat() {
         byte version = peek();
 
         if (version == FLOAT_EXT) {
@@ -386,6 +386,47 @@ public class ETFParser {
     }
 
     /**
+     * This gets the next binary representation of a list or term.
+     *
+     * @return The binary data.
+     */
+    @BertCompatible
+    public String nextBinary() {
+        checkPreconditions(BINARY_EXT);
+
+        long len = Integer.toUnsignedLong(wrap(data, offset, 4).getInt());
+        offset += 4;
+
+        return new String(Arrays.copyOfRange(data, offset, (offset += len)));
+    }
+
+    /**
+     * This gets the next bitstring.
+     *
+     * @return The binary data.
+     */
+    public String nextBitBinary() {
+        checkPreconditions(BIT_BINARY_EXT);
+
+        long len = Integer.toUnsignedLong(wrap(data, offset, 4).getInt());
+        offset += 4;
+
+        byte bits = data[offset++];
+
+        byte[] bytes = new byte[(int) len];
+        for (int i = 0; i < len; i+=4) {
+            byte val = data[offset++];
+
+            if (i == len-1) //Tail
+                val >>>= 8-bits; //bits = # of significant bits from 1-8, so we remove the insignificant ones
+
+            bytes[i] = val;
+        }
+
+        return new String(Arrays.copyOfRange(bytes, 0, (int) len));
+    }
+
+    /**
      * Gets the next "string". NOTE: Erlang doesn't natively support strings, strings are actually just unsigned byte
      * lists (or char list in java). So the string might be nonsensical.
      *
@@ -394,13 +435,13 @@ public class ETFParser {
      * @see String#toCharArray()
      */
     @BertCompatible
-    public String nextString() {
+    public String nextErlangString() {
         checkPreconditions(STRING_EXT);
 
         char len = wrap(data, offset, 2).getChar(); //Because we don't have unsigned shorts
         offset += 2;
 
-        return new String(wrap(data, offset, len).asCharBuffer().array());
+        return new String(Arrays.copyOfRange(data, offset, (offset += len)));
     }
 
     /**
@@ -408,11 +449,15 @@ public class ETFParser {
      *
      * @return The atom or string.
      */
-    public String nextAtomOrString() {
+    public String nextString() {
         byte type = peek();
 
         if (type == STRING_EXT) {
-            return nextString();
+            return nextErlangString();
+        } else if (type == BINARY_EXT) {
+            return nextBinary();
+        } else if (type == BIT_BINARY_EXT) {
+            return nextBitBinary();
         } else {
             return nextAtom();
         }
@@ -602,53 +647,6 @@ public class ETFParser {
         }
 
         return new ErlangList(list, tail);
-    }
-
-    /**
-     * This gets the next binary representation of a list or term.
-     *
-     * @return The binary data.
-     */
-    @BertCompatible
-    public byte[] nextBinary() {
-        checkPreconditions(BINARY_EXT);
-
-        long len = Integer.toUnsignedLong(wrap(data, offset, 4).getInt());
-        offset += 4;
-
-        byte[] bytes = wrap(data, offset, (int) len).array();
-        offset += len;
-
-        return bytes;
-    }
-
-    /**
-     * This gets the next bitstring.
-     *
-     * @return The binary data.
-     */
-    public long[] nextBitBinary() {
-        checkPreconditions(BIT_BINARY_EXT);
-
-        long len = Integer.toUnsignedLong(wrap(data, offset, 4).getInt());
-        offset += 4;
-
-        byte bits = data[offset++];
-        
-        long[] bytes = new long[(int) len];
-        for (int i = 0; i < len; i++) {
-            int val = wrap(data, offset, 4).getInt();
-            offset += 4;
-
-            if (i == len-1) //Tail
-                val >>>= 8-bits; //bits = # of significant bits from 1-8, so we remove the insignificant ones
-
-            bytes[i] = Integer.toUnsignedLong(val);
-        }
-        bytes[bytes.length-1] = bytes[bytes.length-1] >> 8-len;
-        offset += len;
-
-        return bytes;
     }
 
     private BigInteger nextBig(long len) {
@@ -859,7 +857,7 @@ public class ETFParser {
                 nextNil();
                 return null;
             case STRING_EXT:
-                return nextString();
+                return nextErlangString();
             case LIST_EXT:
                 return nextList();
             case BINARY_EXT:
