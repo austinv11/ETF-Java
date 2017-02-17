@@ -1,17 +1,16 @@
 # ETF-Java
 A Java parser/writer for the ETF format.
 
-This api aims to provide high speed low and high level abstractions
-for ETF. Additionally it supports multiple subsets of ETF: standard ETF,
-BERT-rpc and Hammer & Chisel's (Discord's) Loqui.
+This api aims to provide a set of high-speed abstractions for ETF. 
+Additionally, it supports multiple subsets of ETF: standard ETF, BERT-rpc
+and Hammer & Chisel's (Discord's) Loqui.
 
 ## Using ETF-Java
 **TODO**
 
 ## A note about performance
 While this project attempts to be as well optimized as possible, the JVM
-does however creates a limit to how fast this can be just due to how it 
-manages memory. 
+creates a limit to how fast this can be just due to how it manages memory. 
 
 Performance can be improved via JNI or usage of the `Unsafe` class
 but these have issues which has kept me using pure java. 
