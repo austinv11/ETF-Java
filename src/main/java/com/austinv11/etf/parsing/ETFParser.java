@@ -1,8 +1,8 @@
-package com.austinv11.etf.util.parsing;
+package com.austinv11.etf.parsing;
 
+import com.austinv11.etf.ETFConfig;
 import com.austinv11.etf.erlang.*;
 import com.austinv11.etf.util.BertCompatible;
-import com.austinv11.etf.util.ETFConstants;
 import com.austinv11.etf.util.ETFException;
 
 import java.io.UnsupportedEncodingException;
@@ -24,32 +24,22 @@ public class ETFParser {
     private int offset = 0;
     private final int expectedVersion;
     private final boolean bert;
+    private final boolean loqui;
 
-    public ETFParser(byte[] data) {
-        this(data, ETFConstants.VERSION);
+    public ETFParser(byte[] data, ETFConfig config) {
+        this(data, config, false);
     }
 
-    public ETFParser(byte[] data, ETFParser parent) {
-        this(data, parent.expectedVersion, parent.bert, true);
-    }
-
-    public ETFParser(byte[] data, boolean bert) {
-        this(data, ETFConstants.VERSION, bert, false);
-    }
-
-    public ETFParser(byte[] data, int expectedVersion) {
-        this(data, expectedVersion, false, false);
-    }
-
-    public ETFParser(byte[] data, int expectedVersion, boolean bert, boolean partial) {
-        this.expectedVersion = expectedVersion;
-        this.bert = bert;
+    public ETFParser(byte[] data, ETFConfig config, boolean partial) {
+        this.expectedVersion = config.getVersion();
+        this.bert = config.isBert();
+        this.loqui = config.isLoqui();
 
         int initialOffset = 0;
         if (Byte.toUnsignedInt(data[initialOffset]) == expectedVersion) //Skip the version number
             initialOffset++;
 
-        if (!partial) {
+        if (!partial && config.isIncludingHeader()) {
             if (data[initialOffset] != HEADER)
                 throw new ETFException("Missing header! Is this data malformed?");
             initialOffset++;
@@ -386,6 +376,25 @@ public class ETFParser {
     }
 
     /**
+     * Gets the next boolean (expects the boolean to be encoded as an atom!),
+     *
+     * @return The next boolean encoded as an atom.
+     */
+    public boolean nextBoolean() {
+        if (!loqui)
+            throw new ETFException("Loqui booleans not supported!");
+
+        String atom;
+
+        if (peek() == SMALL_ATOM_EXT)
+            atom = nextSmallAtom();
+        else
+            atom = nextSmallUTF8Atom();
+
+        return Boolean.parseBoolean(atom);
+    }
+
+    /**
      * This gets the next binary representation of a list or term.
      *
      * @return The binary data.
@@ -610,7 +619,16 @@ public class ETFParser {
      */
     @BertCompatible
     public boolean isNil() {
-        return peek() == NIL_EXT;
+        if (peek() == NIL_EXT || !loqui)
+           return peek() == NIL_EXT;
+        else if (peek() == SMALL_ATOM_EXT || peek() == SMALL_ATOM_UTF8_EXT) {//Because Discord's api is annoying
+            int initialOffset = offset;
+            String atom = nextAtom();
+            offset = initialOffset; //Reset offset because it wasn't nil!
+            return atom.equals("nil");
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -618,7 +636,13 @@ public class ETFParser {
      */
     @BertCompatible
     public void nextNil() {
-        checkPreconditions(NIL_EXT); //Offset should be incremented here
+        if (peek() == NIL_EXT || !loqui)
+            checkPreconditions(NIL_EXT); //Offset should be incremented here
+        else if (peek() == SMALL_ATOM_EXT || peek() == SMALL_ATOM_UTF8_EXT) {//Because Discord's api is annoying
+            int initialOffset = offset;
+            if (!nextAtom().equals("nil"))
+                offset = initialOffset; //Reset offset because it wasn't nil!
+        }
     }
 
     /**
@@ -819,6 +843,21 @@ public class ETFParser {
 
     //TODO: Implement advanced BERT objs
 
+    private Object handleWeirdAtoms(String atom) { //Because Discord's api is annoying
+        if (!loqui)
+            return atom;
+
+        switch (atom) {
+            case "true":
+            case "false":
+                return Boolean.parseBoolean(atom);
+            case "nil":
+                return null;
+            default:
+                return atom;
+        }
+    }
+
     /**
      * This gets the next generic term.
      *
@@ -840,7 +879,7 @@ public class ETFParser {
             case FLOAT_EXT:
                 return nextOldFloat();
             case ATOM_EXT:
-                return nextLargeAtom();
+                return handleWeirdAtoms(nextLargeAtom());
             case REFERENCE_EXT:
                 return nextOldReference();
             case PORT_EXT:
@@ -869,7 +908,7 @@ public class ETFParser {
             case NEW_REFERENCE_EXT:
                 return nextNewReference();
             case SMALL_ATOM_EXT:
-                return nextSmallAtom();
+                return handleWeirdAtoms(nextSmallAtom());
             case FUN_EXT:
                 return nextOldFun();
             case NEW_FUN_EXT:
@@ -881,9 +920,9 @@ public class ETFParser {
             case NEW_FLOAT_EXT:
                 return nextNewFloat();
             case ATOM_UTF8_EXT:
-                return nextLargeUTF8Atom();
+                return handleWeirdAtoms(nextLargeUTF8Atom());
             case SMALL_ATOM_UTF8_EXT:
-                return nextSmallUTF8Atom();
+                return handleWeirdAtoms(nextSmallUTF8Atom());
             default:
                 throw new ETFException("Unidentified type " + peek() + " is the data malformed?");
         }

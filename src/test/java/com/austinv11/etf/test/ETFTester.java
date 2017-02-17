@@ -1,6 +1,7 @@
 package com.austinv11.etf.test;
 
-import com.austinv11.etf.util.parsing.ETFParser;
+import com.austinv11.etf.ETFConfig;
+import com.austinv11.etf.util.ETFConstants;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.json.JSONObject;
@@ -8,7 +9,6 @@ import org.junit.Assert;
 
 import java.io.*;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +21,13 @@ public class ETFTester {
     public static final char[] MAP = {131,116,0,0,0,1,109,0,0,0,1,100,97,10};
     public static final char[] LIST = {131,108,0,0,0,3,97,1,97,2,97,3,106};
     public static final char[] NIL = {131, 106};
+    public static final ETFConfig CONFIG = new ETFConfig()
+            .setIncludeHeader(false)
+            .setCompression(false)
+            .setIncludeDistributionHeader(false)
+            .setBert(false)
+            .setVersion(ETFConstants.VERSION)
+            .setLoqui(true);
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         readEtf(ETFTester.class.getResourceAsStream("/test.etf"));
@@ -47,13 +54,13 @@ public class ETFTester {
     }
 
     private static void testCase(char[] etf, Object expected, String message) {
-        Object next = new ETFParser(charsToBytes(etf), 131, false, true).next();
+        Object next = CONFIG.createParser(charsToBytes(etf), true).next();
         System.out.printf("Expected: %s, Parsed: %s%n", next == null ? "null" : expected.toString(), next == null ? "null" : next.toString());
         Assert.assertTrue(message, next == null ? expected == null : next.equals(expected));
     }
 
     private static void readEtf(InputStream is) throws IOException, ClassNotFoundException {
-        Class.forName("com.austinv11.etf.util.parsing.ETFParser");
+        Class.forName("com.austinv11.etf.parsing.ETFParser");
         Class.forName("com.austinv11.etf.util.BertCompatible");
         Class.forName("com.austinv11.etf.util.BertType");
         Class.forName("com.austinv11.etf.util.ETFConstants");
@@ -85,7 +92,7 @@ public class ETFTester {
 
         System.out.println("ETF: ");
         long init = System.currentTimeMillis();
-        System.out.println(new ETFParser(dataArray, 131, false, true).nextMap().toString());
+        System.out.println(CONFIG.createParser(dataArray, true).nextMap().toString());
         System.out.println(System.currentTimeMillis() - init);
     }
 
