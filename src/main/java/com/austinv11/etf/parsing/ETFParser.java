@@ -193,10 +193,10 @@ public class ETFParser {
      *
      * @see #nextDistributionHeader()
      */
-    public int nextAtomCacheIndex() {
+    public short nextAtomCacheIndex() {
         checkPreconditions(ATOM_CACHE_REF, false);
 
-        return data[offset++];
+        return (short) Byte.toUnsignedInt(data[offset++]);
     }
 
     /**

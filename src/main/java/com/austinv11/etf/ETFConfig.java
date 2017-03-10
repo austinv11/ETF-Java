@@ -2,6 +2,7 @@ package com.austinv11.etf;
 
 import com.austinv11.etf.parsing.ETFParser;
 import com.austinv11.etf.util.ETFConstants;
+import com.austinv11.etf.writing.ETFWriter;
 
 /**
  * This provides a clean way to configure etf handlers.
@@ -163,5 +164,24 @@ public class ETFConfig {
      */
     public ETFParser createParser(byte[] data, boolean partial) {
         return new ETFParser(data, this, partial);
+    }
+
+    /**
+     * This creates a new writer using the set configuration.
+     *
+     * @return The new writer instance.
+     */
+    public ETFWriter createWriter() {
+        return createWriter(false);
+    }
+
+    /**
+     * This creates a new writer using the set configuration.
+     *
+     * @param partial Whether the data should be treated as partial (meaning no headers).
+     * @return The new writer instance.
+     */
+    public ETFWriter createWriter(boolean partial) {
+        return new ETFWriter(this, partial);
     }
 }
