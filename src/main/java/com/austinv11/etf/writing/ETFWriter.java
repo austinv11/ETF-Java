@@ -287,10 +287,14 @@ public class ETFWriter {
     }
     
     public ETFWriter writeMap(Object o) {
-        Map<String, Object> properties = new HashMap<>();
-        for (ReflectionUtils.PropertyManager property : ReflectionUtils.findProperties(o, o.getClass()))
-            properties.put(property.getName(), property.getValue());
-        return writeMap(properties);
+        if (o instanceof Map) {
+            return writeMap((Map) o);
+        } else {
+            Map<String, Object> properties = new HashMap<>();
+            for (ReflectionUtils.PropertyManager property : ReflectionUtils.findProperties(o, o.getClass()))
+                properties.put(property.getName(), property.getValue());
+            return writeMap(properties);
+        }
     }
     
     public ETFWriter writeNil() {
