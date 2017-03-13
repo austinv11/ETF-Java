@@ -65,13 +65,13 @@ public class ETFWriter {
     }
 
     public ETFWriter writeSmallInt(int integer) {
-        writeToBuffer(SMALL_INTEGER_EXT, (byte) (integer& 0xff));
+        writeToBuffer(SMALL_INTEGER_EXT, (byte) ((integer >>> 24) & 0xff));
         return this;
     }
 
     public ETFWriter writeLargeInt(int integer) {
-        writeToBuffer(INTEGER_EXT, (byte) (integer & 0xff), (byte) ((integer >>> 8) & 0xff), 
-                (byte) ((integer >>> 16) & 0xff), (byte) ((integer >>> 24) & 0xff));
+        writeToBuffer(INTEGER_EXT, (byte) ((integer >>> 24) & 0xff), (byte) ((integer >>> 16) & 0xff), 
+                (byte) ((integer >>> 8) & 0xff), (byte) (integer & 0xff));
         return this;
     }
 
@@ -92,11 +92,11 @@ public class ETFWriter {
     
     public strictfp ETFWriter writeNewFloat(double num) {
         long longBits = Double.doubleToLongBits(num);
-        writeToBuffer(NEW_FLOAT_EXT, (byte) (longBits & 0xff),
-                (byte) ((longBits >>> 8) & 0xff), (byte) ((longBits >>> 16) & 0xff),
-                (byte) ((longBits >>> 24) & 0xff), (byte) ((longBits >>> 32) & 0xff),
-                (byte) ((longBits >>> 40) & 0xff), (byte) ((longBits >>> 48) & 0xff),
-                (byte) ((longBits >>> 56) & 0xff));
+        writeToBuffer(NEW_FLOAT_EXT, 
+                (byte) ((longBits >>> 56) & 0xff), (byte) ((longBits >>> 48) & 0xff), 
+                (byte) ((longBits >>> 40) & 0xff), (byte) ((longBits >>> 32) & 0xff), 
+                (byte) ((longBits >>> 24) & 0xff), (byte) ((longBits >>> 16) & 0xff),
+                (byte) ((longBits >>> 8) & 0xff), (byte) (longBits & 0xff));
         return this;
     }
     
@@ -108,7 +108,7 @@ public class ETFWriter {
         try {
             byte[] bytes = atom.getBytes("ISO-8859-1" /*Latin-1 charset*/);
             writeToBuffer(ATOM_EXT);
-            writeToBuffer((byte) (bytes.length & 0xff), (byte) ((bytes.length >>> 8) & 0xff)); //Length number
+            writeToBuffer((byte) ((bytes.length >>> 24) & 0xff), (byte) ((bytes.length >>> 16) & 0xff)); //Length number
             writeToBuffer(bytes);
         } catch (UnsupportedEncodingException e) {
             throw new ETFException(e);
@@ -120,7 +120,7 @@ public class ETFWriter {
         try {
             byte[] bytes = atom.getBytes("ISO-8859-1" /*Latin-1 charset*/);
             writeToBuffer(SMALL_ATOM_EXT);
-            writeToBuffer((byte) (bytes.length & 0xff)); //Length number
+            writeToBuffer((byte) ((bytes.length >>> 24) & 0xff)); //Length number
             writeToBuffer(bytes);
         } catch (UnsupportedEncodingException e) {
             throw new ETFException(e);
@@ -132,7 +132,7 @@ public class ETFWriter {
         try {
             byte[] bytes = atom.getBytes("UTF8");           
             writeToBuffer(ATOM_EXT);
-            writeToBuffer((byte) (bytes.length & 0xff), (byte) ((bytes.length >>> 8) & 0xff)); //Length number
+            writeToBuffer((byte) ((bytes.length >>> 24) & 0xff), (byte) ((bytes.length >>> 16) & 0xff)); //Length number
             writeToBuffer(bytes);
         } catch (UnsupportedEncodingException e) {
             throw new ETFException(e);
@@ -144,7 +144,7 @@ public class ETFWriter {
         try {
             byte[] bytes = atom.getBytes("UTF8");
             writeToBuffer(SMALL_ATOM_EXT);
-            writeToBuffer((byte) (bytes.length & 0xff)); //Length number
+            writeToBuffer((byte) ((bytes.length >>> 24) & 0xff)); //Length number
             writeToBuffer(bytes);
         } catch (UnsupportedEncodingException e) {
             throw new ETFException(e);
@@ -179,8 +179,8 @@ public class ETFWriter {
     
     public ETFWriter writeBinary(byte[] bin) {
         writeToBuffer(BINARY_EXT);
-        writeToBuffer((byte) (bin.length & 0xff), (byte) ((bin.length >>> 8) & 0xFF),
-                (byte) ((bin.length >>> 16) & 0xff), (byte) ((bin.length >>> 24) & 0xff));
+        writeToBuffer((byte) ((bin.length >>> 24) & 0xff), (byte) ((bin.length >>> 16) & 0xff),
+                (byte) ((bin.length >>> 8) & 0xFF), (byte) (bin.length & 0xff));
         writeToBuffer(bin);
         return this;
     }
@@ -188,8 +188,8 @@ public class ETFWriter {
     public ETFWriter writeBitString(String string) {
         byte[] bytes = string.getBytes();
         writeToBuffer(BINARY_EXT);
-        writeToBuffer((byte) (bytes.length & 0xff), (byte) ((bytes.length >>> 8) & 0xFF), 
-                (byte) ((bytes.length >>> 16) & 0xff), (byte) ((bytes.length >>> 24) & 0xff));
+        writeToBuffer((byte) ((bytes.length >>> 24) & 0xff), (byte) ((bytes.length >>> 16) & 0xff),
+                (byte) ((bytes.length >>> 8) & 0xFF), (byte) (bytes.length & 0xff));
         int unsigned = Byte.toUnsignedInt(bytes[bytes.length-1]);
         int i = 1;
         while (i < unsigned)
@@ -202,7 +202,7 @@ public class ETFWriter {
     public ETFWriter writeErlangString(String string) {
         char[] chars = string.toCharArray();
         writeToBuffer(STRING_EXT);
-        writeToBuffer((byte) (chars.length & 0xff), (byte) ((chars.length >>> 8) & 0xff));
+        writeToBuffer((byte) ((chars.length >>> 24) & 0xff), (byte) ((chars.length >>> 16) & 0xff));
         for (char character : chars)
             writeToBuffer((byte) character);
         return this;
@@ -219,7 +219,7 @@ public class ETFWriter {
     }
     
     public <T> ETFWriter writeSmallTuple(Collection<T> tuple) {
-        int arity = (tuple.size() & 0xFF);
+        int arity = ((tuple.size() >>> 24) & 0xFF);
         writeToBuffer(SMALL_TUPLE_EXT, (byte) arity);
         Iterator<T> iterator = tuple.iterator();
         for (int i = 0; i < arity; i++)
@@ -228,7 +228,7 @@ public class ETFWriter {
     }
     
     public <T> ETFWriter writeSmallTuple(T[] tuple) {
-        int arity = (tuple.length & 0xFF);
+        int arity = ((tuple.length >>> 24) & 0xFF);
         writeToBuffer(SMALL_TUPLE_EXT, (byte) arity);
         for (int i = 0; i < arity; i++)
             write(tuple[i]);
@@ -238,9 +238,9 @@ public class ETFWriter {
     //TODO primitive tuples
     
     public <T> ETFWriter writeLargeTuple(Collection<T> tuple) {
-        writeToBuffer(LARGE_TUPLE_EXT, (byte) (tuple.size() & 0xFF), 
-                (byte) ((tuple.size() >>> 8) & 0xFF), (byte) ((tuple.size() >>> 16) & 0xFF), 
-                (byte) ((tuple.size() >>> 24) & 0xFF));
+        writeToBuffer(LARGE_TUPLE_EXT, (byte) ((tuple.size() >>> 24) & 0xFF),
+                (byte) ((tuple.size() >>> 16) & 0xFF), (byte) ((tuple.size() >>> 8) & 0xFF),
+                (byte) (tuple.size() & 0xFF));
         Iterator<T> iterator = tuple.iterator();
         for (int i = 0; i < tuple.size(); i++)
             write(iterator.next());
@@ -248,9 +248,9 @@ public class ETFWriter {
     }
     
     public <T> ETFWriter writeLargeTuple(T[] tuple) {
-        writeToBuffer(LARGE_TUPLE_EXT, (byte) (tuple.length & 0xFF),
-                (byte) ((tuple.length >>> 8) & 0xFF), (byte) ((tuple.length >>> 16) & 0xFF),
-                (byte) ((tuple.length >>> 24) & 0xFF));
+        writeToBuffer(LARGE_TUPLE_EXT, (byte) ((tuple.length >>> 24) & 0xFF),
+                (byte) ((tuple.length >>> 16) & 0xFF), (byte) ((tuple.length >>> 8) & 0xFF),
+                (byte) (tuple.length & 0xFF));
         for (int i = 0; i < tuple.length; i++)
             write(tuple[i]);
         return this;
@@ -277,9 +277,9 @@ public class ETFWriter {
     //TODO primitive tuples
     
     public <K, V> ETFWriter writeMap(Map<K, V> map) {
-        writeToBuffer(MAP_EXT, (byte) (map.size() & 0xFF),
-                (byte) ((map.size() >>> 8) & 0xFF), (byte) ((map.size() >>> 16) & 0xFF),
-                (byte) ((map.size() >>> 24) & 0xFF));
+        writeToBuffer(MAP_EXT, (byte) ((map.size() >>> 24) & 0xFF),
+                (byte) ((map.size() >>> 16) & 0xFF), (byte) ((map.size() >>> 8) & 0xFF),
+                (byte) (map.size() & 0xFF));
         for (K key : map.keySet()) {
             write(key);
             write(map.get(key));
@@ -307,9 +307,9 @@ public class ETFWriter {
     }
     
     public <T> ETFWriter writeList(Collection<T> list) {
-        writeToBuffer(LIST_EXT, (byte) (list.size() & 0xFF),
-                (byte) ((list.size() >>> 8) & 0xFF), (byte) ((list.size() >>> 16) & 0xFF),
-                (byte) ((list.size() >>> 24) & 0xFF));
+        writeToBuffer(LIST_EXT, (byte) ((list.size() >>> 24) & 0xFF),
+                (byte) ((list.size() >>> 16) & 0xFF), (byte) ((list.size() >>> 8) & 0xFF),
+                (byte) (list.size() & 0xFF));
         for (T obj : list)
             write(obj);
         writeNil(); //The tail is nil so that this can be a proper list
@@ -317,9 +317,9 @@ public class ETFWriter {
     } 
     
     public <T> ETFWriter writeList(T[] list) {
-        writeToBuffer(LIST_EXT, (byte) (list.length & 0xFF),
-                (byte) ((list.length >>> 8) & 0xFF), (byte) ((list.length >>> 16) & 0xFF),
-                (byte) ((list.length >>> 24) & 0xFF));
+        writeToBuffer(LIST_EXT, (byte) ((list.length >>> 24) & 0xFF),
+                (byte) ((list.length >>> 16) & 0xFF), (byte) ((list.length >>> 8) & 0xFF),
+                (byte) (list.length & 0xFF));
         for (T obj : list)
             write(obj);
         writeNil(); //The tail is nil so that this can be a proper list
@@ -336,7 +336,7 @@ public class ETFWriter {
             num = num.abs();
             int n = (int) Math.ceil(num.bitLength()/8)+1; //Equivalent to Math.ceil(log256(num)) + 1
             byte[] bytes = new byte[n];
-            writeToBuffer(SMALL_BIG_EXT, (byte) (n & 0xFF), signum);
+            writeToBuffer(SMALL_BIG_EXT, (byte) ((n >>> 24) & 0xFF), signum);
             n -= 1;
             while (n >= 0) {
                 BigInteger[] res = num.divideAndRemainder(BigInteger.valueOf(256).pow(n));
@@ -357,7 +357,7 @@ public class ETFWriter {
             num = Math.abs(num);
             int n = (int) Math.ceil(Math.log(num)/Math.log(256))+1; //Equivalent to Math.ceil(log256(num)) + 1
             byte[] bytes = new byte[n];
-            writeToBuffer(SMALL_BIG_EXT, (byte) (n & 0xFF), signum);
+            writeToBuffer(SMALL_BIG_EXT, (byte) ((n >>> 24) & 0xFF), signum);
             n -= 1;
             while (n >= 0) {
                 long rem = num%(long) Math.pow(256, n);
@@ -379,9 +379,8 @@ public class ETFWriter {
             num = num.abs();
             int n = (int) Math.ceil(num.bitLength()/8)+1; //Equivalent to Math.ceil(log256(num)) + 1
             byte[] bytes = new byte[n];
-            writeToBuffer(LARGE_BIG_EXT, (byte) (n & 0xFF),
-                    (byte) ((n >>> 8) & 0xFF), (byte) ((n>>> 16) & 0xFF),
-                    (byte) ((n >>> 24) & 0xFF), signum);
+            writeToBuffer(LARGE_BIG_EXT, (byte) ((n >>> 24) & 0xFF), (byte) ((n >>> 16) & 0xFF),
+                    (byte) ((n >>> 8) & 0xFF), (byte) (n & 0xFF), signum);
             n -= 1;
             while (n >= 0) {
                 BigInteger[] res = num.divideAndRemainder(BigInteger.valueOf(256).pow(n));
@@ -402,9 +401,8 @@ public class ETFWriter {
             num = Math.abs(num);
             int n = (int) Math.ceil(Math.log(num)/Math.log(256))+1; //Equivalent to Math.ceil(log256(num)) + 1
             byte[] bytes = new byte[n];
-            writeToBuffer(LARGE_BIG_EXT, (byte) (n & 0xFF),
-                    (byte) ((n >>> 8) & 0xFF), (byte) ((n>>> 16) & 0xFF),
-                    (byte) ((n >>> 24) & 0xFF), signum);
+            writeToBuffer(LARGE_BIG_EXT, (byte) ((n >>> 24) & 0xFF), (byte) ((n >>> 16) & 0xFF),
+                    (byte) ((n >>> 8) & 0xFF), (byte) (n & 0xFF), signum);
             n -= 1;
             while (n >= 0) {
                 long rem = num%(long) Math.pow(256, n);
