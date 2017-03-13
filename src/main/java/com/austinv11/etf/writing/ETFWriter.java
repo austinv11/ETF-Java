@@ -588,7 +588,7 @@ public class ETFWriter {
      */
     public byte[] toBytes() {
         byte[] array = new byte[buffer.position()];
-        buffer.slice().get(array);
+        buffer.slice().get(array, 0, array.length);
         return array;
     }
     
