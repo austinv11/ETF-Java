@@ -604,7 +604,7 @@ public class ETFWriter {
      * @return The byte array representing this data.
      */
     public byte[] toBytes() {
-        return data;
+        return Arrays.copyOfRange(data, 0, offset);
     }
     
     /**
@@ -613,15 +613,15 @@ public class ETFWriter {
      * @return The underlying buffer.
      */
     public ByteBuffer toBuffer() {
-        return ByteBuffer.wrap(data);
+        return ByteBuffer.wrap(toBytes());
     }
     
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder("<");
-        for (int i = 0; i < data.length; i++) {
+        for (int i = 0; i < offset; i++) {
             builder.append(data[i]);
-            if (i+1 != data.length)
+            if (i+1 != offset)
                 builder.append(", ");
         }
         builder.append(">");
