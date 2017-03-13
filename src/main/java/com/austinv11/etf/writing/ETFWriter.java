@@ -65,7 +65,7 @@ public class ETFWriter {
     }
 
     public ETFWriter writeSmallInt(int integer) {
-        writeToBuffer(SMALL_INTEGER_EXT, (byte) ((integer >>> 24) & 0xff));
+        writeToBuffer(SMALL_INTEGER_EXT, (byte) (integer & 0xff));
         return this;
     }
 
@@ -108,7 +108,7 @@ public class ETFWriter {
         try {
             byte[] bytes = atom.getBytes("ISO-8859-1" /*Latin-1 charset*/);
             writeToBuffer(ATOM_EXT);
-            writeToBuffer((byte) ((bytes.length >>> 24) & 0xff), (byte) ((bytes.length >>> 16) & 0xff)); //Length number
+            writeToBuffer((byte) ((bytes.length >>> 8) & 0xff), (byte) (bytes.length & 0xff)); //Length number
             writeToBuffer(bytes);
         } catch (UnsupportedEncodingException e) {
             throw new ETFException(e);
@@ -120,7 +120,7 @@ public class ETFWriter {
         try {
             byte[] bytes = atom.getBytes("ISO-8859-1" /*Latin-1 charset*/);
             writeToBuffer(SMALL_ATOM_EXT);
-            writeToBuffer((byte) ((bytes.length >>> 24) & 0xff)); //Length number
+            writeToBuffer((byte) (bytes.length & 0xff)); //Length number
             writeToBuffer(bytes);
         } catch (UnsupportedEncodingException e) {
             throw new ETFException(e);
@@ -132,7 +132,7 @@ public class ETFWriter {
         try {
             byte[] bytes = atom.getBytes("UTF8");           
             writeToBuffer(ATOM_EXT);
-            writeToBuffer((byte) ((bytes.length >>> 24) & 0xff), (byte) ((bytes.length >>> 16) & 0xff)); //Length number
+            writeToBuffer((byte) ((bytes.length >>> 8) & 0xff), (byte) (bytes.length & 0xff)); //Length number
             writeToBuffer(bytes);
         } catch (UnsupportedEncodingException e) {
             throw new ETFException(e);
@@ -144,7 +144,7 @@ public class ETFWriter {
         try {
             byte[] bytes = atom.getBytes("UTF8");
             writeToBuffer(SMALL_ATOM_EXT);
-            writeToBuffer((byte) ((bytes.length >>> 24) & 0xff)); //Length number
+            writeToBuffer((byte) (bytes.length & 0xff)); //Length number
             writeToBuffer(bytes);
         } catch (UnsupportedEncodingException e) {
             throw new ETFException(e);
@@ -202,7 +202,7 @@ public class ETFWriter {
     public ETFWriter writeErlangString(String string) {
         char[] chars = string.toCharArray();
         writeToBuffer(STRING_EXT);
-        writeToBuffer((byte) ((chars.length >>> 24) & 0xff), (byte) ((chars.length >>> 16) & 0xff));
+        writeToBuffer((byte) ((chars.length >>> 8) & 0xff), (byte) (chars.length & 0xff));
         for (char character : chars)
             writeToBuffer((byte) character);
         return this;
@@ -219,7 +219,7 @@ public class ETFWriter {
     }
     
     public <T> ETFWriter writeSmallTuple(Collection<T> tuple) {
-        int arity = ((tuple.size() >>> 24) & 0xFF);
+        int arity = (tuple.size() & 0xFF);
         writeToBuffer(SMALL_TUPLE_EXT, (byte) arity);
         Iterator<T> iterator = tuple.iterator();
         for (int i = 0; i < arity; i++)
@@ -228,7 +228,7 @@ public class ETFWriter {
     }
     
     public <T> ETFWriter writeSmallTuple(T[] tuple) {
-        int arity = ((tuple.length >>> 24) & 0xFF);
+        int arity = (tuple.length & 0xFF);
         writeToBuffer(SMALL_TUPLE_EXT, (byte) arity);
         for (int i = 0; i < arity; i++)
             write(tuple[i]);
@@ -336,7 +336,7 @@ public class ETFWriter {
             num = num.abs();
             int n = (int) Math.ceil(num.bitLength()/8)+1; //Equivalent to Math.ceil(log256(num)) + 1
             byte[] bytes = new byte[n];
-            writeToBuffer(SMALL_BIG_EXT, (byte) ((n >>> 24) & 0xFF), signum);
+            writeToBuffer(SMALL_BIG_EXT, (byte) (n & 0xFF), signum);
             n -= 1;
             while (n >= 0) {
                 BigInteger[] res = num.divideAndRemainder(BigInteger.valueOf(256).pow(n));
@@ -357,7 +357,7 @@ public class ETFWriter {
             num = Math.abs(num);
             int n = (int) Math.ceil(Math.log(num)/Math.log(256))+1; //Equivalent to Math.ceil(log256(num)) + 1
             byte[] bytes = new byte[n];
-            writeToBuffer(SMALL_BIG_EXT, (byte) ((n >>> 24) & 0xFF), signum);
+            writeToBuffer(SMALL_BIG_EXT, (byte) (n & 0xFF), signum);
             n -= 1;
             while (n >= 0) {
                 long rem = num%(long) Math.pow(256, n);
