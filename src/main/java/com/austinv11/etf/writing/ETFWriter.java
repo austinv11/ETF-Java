@@ -418,17 +418,17 @@ public class ETFWriter {
     
     public ETFWriter writeBigNumber(BigInteger num) {
         if ((int) Math.ceil(num.bitLength() / 8) + 1 > 256) //Equivalent to Math.ceil(log256(num)) + 1)
-            writeSmallBig(num);
+			writeLargeBig(num);
         else
-            writeLargeBig(num);
+            writeSmallBig(num);
         return this;
     }
     
     public ETFWriter writeBigNumber(Long num) {
         if ((int) Math.ceil(Math.log(num) / Math.log(256)) + 1 > 256) //Equivalent to Math.ceil(log256(num)) + 1)
-            writeSmallBig(num);
-        else
-            writeLargeBig(num);
+			writeLargeBig(num);
+		else
+			writeSmallBig(num);
         return this;
     }
     
