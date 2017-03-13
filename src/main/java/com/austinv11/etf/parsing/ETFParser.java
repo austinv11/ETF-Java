@@ -5,12 +5,12 @@ import com.austinv11.etf.erlang.*;
 import com.austinv11.etf.util.BertCompatible;
 import com.austinv11.etf.util.ETFException;
 
+import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.*;
-import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
 import static com.austinv11.etf.common.TermTypes.*;
@@ -44,21 +44,25 @@ public class ETFParser {
                 throw new ETFException("Missing header! Is this data malformed?");
             initialOffset++;
 
-            int uncompressedSize = wrap(data, initialOffset, 4).getInt();
-            byte[] inflatedData = new byte[uncompressedSize];
+            long uncompressedSize = wrap(data, initialOffset, 4).getInt();
+            initialOffset += 4;
+            
             Inflater inflater = new Inflater();
-            inflater.setInput(Arrays.copyOfRange(data, offset, data.length));
-
+            inflater.setInput(Arrays.copyOfRange(data, initialOffset, data.length));
+            
             try {
-                inflater.inflate(inflatedData);
-            } catch (DataFormatException e) {
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
+                byte[] buffer = new byte[1024];
+                while (inflater.getBytesWritten() != uncompressedSize) {
+                    int count = inflater.inflate(buffer);
+                    outputStream.write(buffer, 0, count);
+                }
+                inflater.end();
+                outputStream.close();
+                this.data = outputStream.toByteArray();
+            } catch (Exception e) {
                 throw new ETFException(e);
             }
-
-            if (!inflater.finished())
-                throw new ETFException("Inflater not finished, is the distribution header wrong?");
-
-            this.data = inflatedData;
         } else {
             this.data = data;
         }
