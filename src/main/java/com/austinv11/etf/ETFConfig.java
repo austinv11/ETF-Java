@@ -2,6 +2,7 @@ package com.austinv11.etf;
 
 import com.austinv11.etf.parsing.ETFParser;
 import com.austinv11.etf.util.ETFConstants;
+import com.austinv11.etf.util.Mapper;
 import com.austinv11.etf.writing.ETFWriter;
 
 /**
@@ -183,5 +184,14 @@ public class ETFConfig {
      */
     public ETFWriter createWriter(boolean partial) {
         return new ETFWriter(this, partial);
+    }
+    
+    /**
+     * This creates a new mapper using this configuration.
+     *
+     * @return The new mapper instance.
+     */
+    public Mapper createMapper() {
+        return new Mapper(this);
     }
 }

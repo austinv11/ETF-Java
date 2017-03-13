@@ -16,7 +16,7 @@ import java.util.zip.Inflater;
 import static com.austinv11.etf.common.TermTypes.*;
 
 /**
- * This represents a utility parser for parsing data from an etf object.
+ * This represents a parser for parsing data from an etf object.
  */
 public class ETFParser {
 

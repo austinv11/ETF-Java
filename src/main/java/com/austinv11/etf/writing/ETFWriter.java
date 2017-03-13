@@ -16,7 +16,7 @@ import java.util.Map;
 import static com.austinv11.etf.common.TermTypes.*;
 
 /**
- * This represents a utility writer for writing data to an etf object.
+ * This represents a writer for writing data to an etf object.
  */
 public class ETFWriter {
 
