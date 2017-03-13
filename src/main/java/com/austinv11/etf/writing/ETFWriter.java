@@ -3,15 +3,13 @@ package com.austinv11.etf.writing;
 import com.austinv11.etf.ETFConfig;
 import com.austinv11.etf.erlang.*;
 import com.austinv11.etf.util.ETFException;
+import com.austinv11.etf.util.ReflectionUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.austinv11.etf.common.TermTypes.*;
 
@@ -286,6 +284,13 @@ public class ETFWriter {
             write(map.get(key));
         }
         return this;
+    }
+    
+    public ETFWriter writeMap(Object o) {
+        Map<String, Object> properties = new HashMap<>();
+        for (ReflectionUtils.PropertyManager property : ReflectionUtils.findProperties(o, o.getClass()))
+            properties.put(property.getName(), property.getValue());
+        return writeMap(properties);
     }
     
     public ETFWriter writeNil() {
@@ -563,6 +568,9 @@ public class ETFWriter {
             }
         } else if (o instanceof String) {
             writeAtom((String) o); //TODO should we optimize for other types?
+            return;
+        } else {
+            writeMap(o);
             return;
         }
         
