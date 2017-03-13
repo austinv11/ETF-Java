@@ -400,13 +400,13 @@ public class ETFParser {
      * @return The binary data.
      */
     @BertCompatible
-    public String nextBinary() {
+    public byte[] nextBinary() {
         checkPreconditions(BINARY_EXT);
 
         long len = Integer.toUnsignedLong(wrap(data, offset, 4).getInt());
         offset += 4;
 
-        return new String(Arrays.copyOfRange(data, offset, (offset += len)));
+        return Arrays.copyOfRange(data, offset, (offset += len));
     }
 
     /**
@@ -463,8 +463,6 @@ public class ETFParser {
 
         if (type == STRING_EXT) {
             return nextErlangString();
-        } else if (type == BINARY_EXT) {
-            return nextBinary();
         } else if (type == BIT_BINARY_EXT) {
             return nextBitBinary();
         } else {
