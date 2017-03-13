@@ -174,6 +174,10 @@ public class ETFWriter {
         return writeAtom(bool ? "true" : "false");
     }
     
+    public ETFWriter writeBinary(String bin) {
+        return writeBinary(bin.getBytes());
+    }
+    
     public ETFWriter writeBinary(byte[] bin) {
         writeToBuffer(BINARY_EXT);
         writeToBuffer((byte) ((bin.length >>> 24) & 0xff), (byte) ((bin.length >>> 16) & 0xff),

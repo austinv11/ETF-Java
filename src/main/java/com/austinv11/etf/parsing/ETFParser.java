@@ -465,6 +465,8 @@ public class ETFParser {
             return nextErlangString();
         } else if (type == BIT_BINARY_EXT) {
             return nextBitBinary();
+        } else if (type == BINARY_EXT) {
+            return new String(nextBinary());
         } else {
             return nextAtom();
         }
