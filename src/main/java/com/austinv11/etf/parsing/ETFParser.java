@@ -44,7 +44,7 @@ public class ETFParser {
                 throw new ETFException("Missing header! Is this data malformed?");
             initialOffset++;
 
-            int uncompressedSize = wrap(data, initialOffset, (initialOffset += 4)).getInt();
+            int uncompressedSize = wrap(data, initialOffset, 4).getInt();
             byte[] inflatedData = new byte[uncompressedSize];
             Inflater inflater = new Inflater();
             inflater.setInput(Arrays.copyOfRange(data, offset, data.length));
