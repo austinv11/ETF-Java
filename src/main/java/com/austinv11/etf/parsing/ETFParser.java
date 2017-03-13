@@ -569,9 +569,10 @@ public class ETFParser {
     public Tuple nextLargeTuple() {
         checkPreconditions(LARGE_TUPLE_EXT);
 
-        Tuple tuple = findTuple(Integer.toUnsignedLong(wrap(data, offset, 4).getInt()));
-
+        long arity = Integer.toUnsignedLong(wrap(data, offset, 4).getInt());
         offset += 4;
+        
+        Tuple tuple = findTuple(arity);
 
         return tuple;
     }
