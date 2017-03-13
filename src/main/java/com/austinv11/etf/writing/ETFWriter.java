@@ -351,7 +351,7 @@ public class ETFWriter {
     
     public ETFWriter writeSmallBig(long num) {
         if (num == 0) {
-            writeToBuffer(LARGE_BIG_EXT, (byte) 0, (byte) 0);
+            writeToBuffer(SMALL_BIG_EXT, (byte) 0, (byte) 0);
         } else {
             byte signum = num < 0 ? (byte) 1 : (byte) 0;
             num = Math.abs(num);
