@@ -328,74 +328,90 @@ public class ETFWriter {
     //TODO primitive lists
     
     public ETFWriter writeSmallBig(BigInteger num) {
-        byte signum = num.signum() == -1 ? (byte) 1 : (byte) 0;
-        num = num.abs();
-        int n = (int) Math.ceil(num.bitLength() / 8) + 1; //Equivalent to Math.ceil(log256(num)) + 1
-        byte[] bytes = new byte[n];
-        writeToBuffer(SMALL_BIG_EXT, (byte) ((n >>> 24) & 0xFF), signum);
-        n -= 1;
-        while (n >= 0) {
-            BigInteger[] res = num.divideAndRemainder(BigInteger.valueOf(256).pow(n));
-            bytes[n] = res[0].byteValue(); //Quotient
-            num = res[1]; //Remainder
-            n--;
+        if (num.equals(BigInteger.ZERO)) {
+            writeToBuffer(SMALL_BIG_EXT, (byte) 0, (byte) 0);
+        } else {
+            byte signum = num.signum() == -1 ? (byte) 1 : (byte) 0;
+            num = num.abs();
+            int n = (int) Math.ceil(num.bitLength()/8)+1; //Equivalent to Math.ceil(log256(num)) + 1
+            byte[] bytes = new byte[n];
+            writeToBuffer(SMALL_BIG_EXT, (byte) ((n >>> 24) & 0xFF), signum);
+            n -= 1;
+            while (n >= 0) {
+                BigInteger[] res = num.divideAndRemainder(BigInteger.valueOf(256).pow(n));
+                bytes[n] = res[0].byteValue(); //Quotient
+                num = res[1]; //Remainder
+                n--;
+            }
+            writeToBuffer(bytes);
         }
-        writeToBuffer(bytes);
         return this;
     }
     
     public ETFWriter writeSmallBig(long num) {
-        byte signum = num < 0 ? (byte) 1 : (byte) 0;
-        num = Math.abs(num);
-        int n = (int) Math.ceil(Math.log(num) / Math.log(256)) + 1; //Equivalent to Math.ceil(log256(num)) + 1
-        byte[] bytes = new byte[n];
-        writeToBuffer(SMALL_BIG_EXT, (byte) ((n >>> 24) & 0xFF), signum);
-        n -= 1;
-        while (n >= 0) {
-            long rem = num % (long) Math.pow(256, n);
-            long quo = num / (long) Math.pow(256, n);
-            bytes[n] = (byte) quo;
-            num = rem;
-            n--;
+        if (num == 0) {
+            writeToBuffer(LARGE_BIG_EXT, (byte) 0, (byte) 0);
+        } else {
+            byte signum = num < 0 ? (byte) 1 : (byte) 0;
+            num = Math.abs(num);
+            int n = (int) Math.ceil(Math.log(num)/Math.log(256))+1; //Equivalent to Math.ceil(log256(num)) + 1
+            byte[] bytes = new byte[n];
+            writeToBuffer(SMALL_BIG_EXT, (byte) ((n >>> 24) & 0xFF), signum);
+            n -= 1;
+            while (n >= 0) {
+                long rem = num%(long) Math.pow(256, n);
+                long quo = num/(long) Math.pow(256, n);
+                bytes[n] = (byte) quo;
+                num = rem;
+                n--;
+            }
+            writeToBuffer(bytes);
         }
-        writeToBuffer(bytes);
         return this;
     }
     
     public ETFWriter writeLargeBig(BigInteger num) {
-        byte signum = num.signum() == -1 ? (byte) 1 : (byte) 0;
-        num = num.abs();
-        int n = (int) Math.ceil(num.bitLength() / 8) + 1; //Equivalent to Math.ceil(log256(num)) + 1
-        byte[] bytes = new byte[n];
-        writeToBuffer(LARGE_BIG_EXT, (byte) ((n >>> 24) & 0xFF), (byte) ((n >>> 16) & 0xFF), 
-                (byte) ((n >>> 8) & 0xFF), (byte) (n & 0xFF), signum);
-        n -= 1;
-        while (n >= 0) {
-            BigInteger[] res = num.divideAndRemainder(BigInteger.valueOf(256).pow(n));
-            bytes[n] = res[0].byteValue(); //Quotient
-            num = res[1]; //Remainder
-            n--;
+        if (num.equals(BigInteger.ZERO)) {
+            writeToBuffer(LARGE_BIG_EXT, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0);
+        } else {
+            byte signum = num.signum() == -1 ? (byte) 1 : (byte) 0;
+            num = num.abs();
+            int n = (int) Math.ceil(num.bitLength()/8)+1; //Equivalent to Math.ceil(log256(num)) + 1
+            byte[] bytes = new byte[n];
+            writeToBuffer(LARGE_BIG_EXT, (byte) ((n >>> 24) & 0xFF), (byte) ((n >>> 16) & 0xFF),
+                    (byte) ((n >>> 8) & 0xFF), (byte) (n & 0xFF), signum);
+            n -= 1;
+            while (n >= 0) {
+                BigInteger[] res = num.divideAndRemainder(BigInteger.valueOf(256).pow(n));
+                bytes[n] = res[0].byteValue(); //Quotient
+                num = res[1]; //Remainder
+                n--;
+            }
+            writeToBuffer(bytes);
         }
-        writeToBuffer(bytes);
         return this;
     }
     
     public ETFWriter writeLargeBig(long num) {
-        byte signum = num < 0 ? (byte) 1 : (byte) 0;
-        num = Math.abs(num);
-        int n = (int) Math.ceil(Math.log(num) / Math.log(256)) + 1; //Equivalent to Math.ceil(log256(num)) + 1
-        byte[] bytes = new byte[n];
-        writeToBuffer(LARGE_BIG_EXT, (byte) ((n >>> 24) & 0xFF), (byte) ((n >>> 16) & 0xFF),
-                (byte) ((n >>> 8) & 0xFF), (byte) (n & 0xFF), signum);
-        n -= 1;
-        while (n >= 0) {
-            long rem = num % (long) Math.pow(256, n);
-            long quo = num / (long) Math.pow(256, n);
-            bytes[n] = (byte) quo;
-            num = rem;
-            n--;
+        if (num == 0) {
+            writeToBuffer(LARGE_BIG_EXT, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0);
+        } else {
+            byte signum = num < 0 ? (byte) 1 : (byte) 0;
+            num = Math.abs(num);
+            int n = (int) Math.ceil(Math.log(num)/Math.log(256))+1; //Equivalent to Math.ceil(log256(num)) + 1
+            byte[] bytes = new byte[n];
+            writeToBuffer(LARGE_BIG_EXT, (byte) ((n >>> 24) & 0xFF), (byte) ((n >>> 16) & 0xFF),
+                    (byte) ((n >>> 8) & 0xFF), (byte) (n & 0xFF), signum);
+            n -= 1;
+            while (n >= 0) {
+                long rem = num%(long) Math.pow(256, n);
+                long quo = num/(long) Math.pow(256, n);
+                bytes[n] = (byte) quo;
+                num = rem;
+                n--;
+            }
+            writeToBuffer(bytes);
         }
-        writeToBuffer(bytes);
         return this;
     }
     
@@ -407,7 +423,7 @@ public class ETFWriter {
         return this;
     }
     
-    public ETFWriter writeBigNumber(long num) {
+    public ETFWriter writeBigNumber(Long num) {
         if ((int) Math.ceil(Math.log(num) / Math.log(256)) + 1 > 256) //Equivalent to Math.ceil(log256(num)) + 1)
             writeSmallBig(num);
         else
@@ -599,6 +615,6 @@ public class ETFWriter {
      * @return The underlying buffer.
      */
     public ByteBuffer toBuffer() {
-        return buffer;
+        return (ByteBuffer) buffer.slice().flip();
     }
 }
