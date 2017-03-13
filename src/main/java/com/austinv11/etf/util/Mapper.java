@@ -65,10 +65,7 @@ public class Mapper {
 	public <T> byte[] writeToMap(T obj) {
 		ETFWriter writer = config.createWriter();
 		Map<String, Object> properties = findProperties(obj, obj.getClass())
-				.stream().filter(o -> {
-					System.out.println(o);
-					return true;
-				}).collect(Collectors.toMap(PropertyManager::getName, PropertyManager::getValue));
+				.stream().collect(Collectors.toMap(PropertyManager::getName, PropertyManager::getValue));
 		return writer.writeMap(properties).toBytes();
 	}
 	
@@ -256,10 +253,12 @@ public class Mapper {
 		}
 		
 		public Object getValue() {
+			System.out.println(name);
 			return accessor.get();
 		}
 		
 		public String getName() {
+			System.out.println(name);
 			return name;
 		}
 	}
