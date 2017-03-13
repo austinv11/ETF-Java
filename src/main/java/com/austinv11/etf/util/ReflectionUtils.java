@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -26,12 +27,26 @@ public class ReflectionUtils {
 	
 	public static List<PropertyManager> findProperties(Object instance, Class clazz) {
 		List<PropertyManager> properties = new ArrayList<>();
-		for (Field field : clazz.getFields()) {
+		for (Field field : getAllFields(clazz)) {
 			if (!Modifier.isTransient(field.getModifiers())) {
 				properties.add(new PropertyManager(instance, field));
 			}
 		}
 		return properties;
+	}
+	
+	public static List<Field> getAllFields(Class clazz) {
+		List<Field> fields = new ArrayList<>();
+		Collections.addAll(fields, clazz.getDeclaredFields());
+		Collections.addAll(fields, clazz.getFields());
+		return fields;
+	}
+	
+	public static List<Method> getAllMethods(Class clazz) {
+		List<Method> methods = new ArrayList<>();
+		Collections.addAll(methods, clazz.getDeclaredMethods());
+		Collections.addAll(methods, clazz.getMethods());
+		return methods;
 	}
 	
 	public static <T> T createInstance(Class<T> clazz) {
@@ -149,7 +164,7 @@ public class ReflectionUtils {
 			IPropertyAccessor accessor = null;
 			boolean isFinal = Modifier.isFinal(field.getModifiers());
 			IPropertyMutator mutator = isFinal ? NOPAccessorAndMutator.INSTANCE : null;
-			for (Method m : instance.getClass().getMethods()) {
+			for (Method m : getAllMethods(instance.getClass())) {
 				if (mutator != null && accessor != null)
 					break;
 				
