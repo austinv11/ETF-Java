@@ -75,6 +75,17 @@ public class Mapper {
 		return writer.toBytes();
 	}
 	
+	public <T> T read(ErlangMap data, Class<T> clazz) {
+		T instance = createInstance(clazz);
+		List<PropertyManager> properties = findProperties(instance, clazz);
+		for (PropertyManager property : properties) {
+			if (data.containsKey(property.getName())) {
+				property.setValue(data.get(property.getName()));
+			}
+		}
+		return instance;
+	}
+	
 	public <T> T read(byte[] data, Class<T> clazz) {
 		ETFParser parser = config.createParser(data);
 		T instance = createInstance(clazz);
@@ -84,12 +95,7 @@ public class Mapper {
 			if (Map.class.isAssignableFrom(clazz)) { //User wants a map so lets give it to them
 				return (T) map;
 			} else {
-				for (PropertyManager property : properties) {
-					if (map.containsKey(property.getName())) {
-						property.setValue(map.get(property.getName()));
-					}
-				}
-				return instance;
+				return read(map, clazz);
 			}
 		} else {
 			for (PropertyManager property : properties) {
