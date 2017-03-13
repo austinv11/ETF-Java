@@ -587,6 +587,17 @@ public class ETFWriter {
      * @return The byte array representing this data.
      */
     public byte[] toBytes() {
-        return buffer.array();
+        byte[] array = new byte[buffer.position()];
+        buffer.get(array);
+        return array;
+    }
+    
+    /**
+     * Gives access to the direct buffer in the writer.
+     * 
+     * @return The underlying buffer.
+     */
+    public ByteBuffer toBuffer() {
+        return buffer;
     }
 }
