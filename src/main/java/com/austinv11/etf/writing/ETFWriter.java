@@ -47,7 +47,7 @@ public class ETFWriter {
 
     private void writeToBuffer(byte... data) {
         if (buffer.remaining() < data.length+1/*Ensure room for a version byte if necessary*/) { //We need to expand the buffer
-            byte[] current = buffer.array();
+            byte[] current = toBytes();
             buffer = ByteBuffer.allocateDirect(buffer.capacity()*2).order(ByteOrder.BIG_ENDIAN);
             buffer.put(current);
         }
