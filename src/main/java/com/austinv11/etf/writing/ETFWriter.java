@@ -8,7 +8,6 @@ import com.austinv11.etf.util.ReflectionUtils;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.*;
 
 import static com.austinv11.etf.common.TermTypes.*;
@@ -18,7 +17,8 @@ import static com.austinv11.etf.common.TermTypes.*;
  */
 public class ETFWriter {
 
-    private ByteBuffer buffer = ByteBuffer.allocateDirect(64).order(ByteOrder.BIG_ENDIAN);
+    private byte[] data = new byte[64];
+    private int offset = 0;
     private final boolean bert;
     private final byte version;
     private final boolean includeHeader;
@@ -46,16 +46,17 @@ public class ETFWriter {
     }
 
     private void writeToBuffer(byte... data) {
-        if (buffer.remaining() < data.length+1/*Ensure room for a version byte if necessary*/) { //We need to expand the buffer
-            byte[] current = toBytes();
-            buffer = ByteBuffer.allocateDirect(buffer.capacity()*2).order(ByteOrder.BIG_ENDIAN);
-            buffer.put(current);
+        if (this.data.length - offset < data.length+1/*Ensure room for a version byte if necessary*/) { //We need to expand the buffer
+            this.data = Arrays.copyOf(this.data, this.data.length * 2);
         }
 
-        if (data[0] != version && !includeDistributionHeader)
-            buffer.put(version);
+        if (data[0] != version && !includeDistributionHeader) {
+           this.data[offset++] = version;
+        }
 
-        buffer.put(data);
+        for (byte b : data) {
+            this.data[offset++] = b;
+        }
     }
 
     public ETFWriter writeAtomCacheIndex(short index) {
@@ -603,9 +604,6 @@ public class ETFWriter {
      * @return The byte array representing this data.
      */
     public byte[] toBytes() {
-        ByteBuffer buf = (ByteBuffer) buffer.slice().flip();
-        byte[] data = new byte[buf.remaining()];
-        buf.get(data);
         return data;
     }
     
@@ -615,6 +613,19 @@ public class ETFWriter {
      * @return The underlying buffer.
      */
     public ByteBuffer toBuffer() {
-        return (ByteBuffer) buffer.slice().flip();
+        return ByteBuffer.wrap(data);
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder("<");
+        for (int i = 0; i < data.length; i++) {
+            builder.append(data[i]);
+            if (i+1 != data.length)
+                builder.append(", ");
+        }
+        builder.append(">");
+        
+        return builder.toString();
     }
 }
