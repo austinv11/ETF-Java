@@ -50,7 +50,7 @@ public class ETFWriter {
             this.data = Arrays.copyOf(this.data, this.data.length * 2);
         }
 
-        if (data[0] != version && !includeDistributionHeader) {
+        if (this.data[0] != version && !includeDistributionHeader) {
            this.data[offset++] = version;
         }
 
