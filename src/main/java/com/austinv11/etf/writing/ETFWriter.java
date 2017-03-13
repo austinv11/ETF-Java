@@ -550,7 +550,7 @@ public class ETFWriter {
                         newArray[i] = ((Character[]) o)[i];
                     o = newArray;
                 }
-                writeAtom(new String((char[]) o)); //TODO should we optimize for other types?
+                writeBinary(new String((char[]) o)); //TODO should we optimize for other types?
                 return;
             } else {
                 if (o instanceof boolean[]) {
@@ -588,7 +588,10 @@ public class ETFWriter {
                 return;
             }
         } else if (o instanceof String) {
-            writeAtom((String) o); //TODO should we optimize for other types?
+            if (!loqui || o.equals("true") || o.equals("false") || o.equals("nil"))
+                writeAtom((String) o); //TODO should we optimize for other types?
+            else
+                writeBinary((String) o);
             return;
         } else {
             writeMap(o);
