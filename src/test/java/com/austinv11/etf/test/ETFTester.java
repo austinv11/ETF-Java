@@ -60,23 +60,6 @@ public class ETFTester {
     }
 
     private static void readEtf(InputStream is) throws IOException, ClassNotFoundException {
-        Class.forName("com.austinv11.etf.parsing.ETFParser");
-        Class.forName("com.austinv11.etf.util.BertCompatible");
-        Class.forName("com.austinv11.etf.util.BertType");
-        Class.forName("com.austinv11.etf.util.ETFConstants");
-        Class.forName("com.austinv11.etf.util.ETFException");
-        Class.forName("com.austinv11.etf.erlang.DistributionHeader");
-        Class.forName("com.austinv11.etf.erlang.ErlangList");
-        Class.forName("com.austinv11.etf.erlang.ErlangMap");
-        Class.forName("com.austinv11.etf.erlang.ErlangObject");
-        Class.forName("com.austinv11.etf.erlang.Fun");
-        Class.forName("com.austinv11.etf.erlang.PID");
-        Class.forName("com.austinv11.etf.erlang.Port");
-        Class.forName("com.austinv11.etf.erlang.Reference");
-        Class.forName("com.austinv11.etf.erlang.Tuple");
-        Class.forName("com.austinv11.etf.common.TermTypes");
-
-
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
         int nRead;
