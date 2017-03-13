@@ -587,9 +587,10 @@ public class ETFWriter {
      * @return The byte array representing this data.
      */
     public byte[] toBytes() {
-        byte[] array = new byte[buffer.position()];
-        buffer.slice().get(array, 0, array.length);
-        return array;
+        ByteBuffer buf = (ByteBuffer) buffer.slice().flip();
+        byte[] data = new byte[buf.remaining()];
+        buf.get(data);
+        return data;
     }
     
     /**
