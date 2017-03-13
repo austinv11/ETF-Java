@@ -11,9 +11,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * This represents a mapper which will handle object serialization/deserialization.
@@ -64,18 +64,9 @@ public class Mapper {
 	
 	public <T> byte[] writeToMap(T obj) {
 		ETFWriter writer = config.createWriter();
-		Map<String, Object> properties = findProperties(obj, obj.getClass())
-				.stream().collect(Collectors.toMap((propertyManager) -> {
-					System.out.println("NAME");
-					System.out.println(propertyManager.getName());
-					System.out.println("TYPE");
-					System.out.println(propertyManager.getClass());
-					return propertyManager.getName();
-				}, (propertyManager) -> {
-					System.out.println("VALUE");
-					System.out.println(propertyManager.getValue());
-					return propertyManager.getValue();
-				}));
+		Map<String, Object> properties = new HashMap<>();
+		for (PropertyManager property : findProperties(obj, obj.getClass()))
+				properties.put(property.getName(), property.getValue());
 		return writer.writeMap(properties).toBytes();
 	}
 	
