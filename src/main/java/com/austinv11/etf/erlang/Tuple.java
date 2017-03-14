@@ -14,7 +14,17 @@ import java.util.AbstractList;
 public class Tuple extends AbstractList<Object> implements ErlangObject {
 
     private final Object[] data;
-
+    
+    /**
+     * Creates a tuple with the provided objects.
+     * 
+     * @param data The data.
+     * @return The tuple containing the data.
+     */
+    public static Tuple of(Object... data) {
+        return new Tuple(data);
+    }
+    
     public Tuple(Object[] data) {
         this.data = data;
     }
