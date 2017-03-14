@@ -349,11 +349,11 @@ public class ETFWriter {
         return this;
     }
     
-    public ETFWriter writeSmallBig(long num) {
+    public ETFWriter writeSmallBig(long num, byte sign) {
         if (num == 0) {
             writeToBuffer(SMALL_BIG_EXT, (byte) 0, (byte) 0);
         } else {
-            byte signum = num < 0 ? (byte) 1 : (byte) 0;
+            byte signum = sign < 0 ? (byte) 1 : (byte) 0;
             num = Math.abs(num);
             int n = (int) Math.ceil(Math.log(num)/Math.log(256))+1; //Equivalent to Math.ceil(log256(num)) + 1
             byte[] bytes = new byte[n];
@@ -393,11 +393,11 @@ public class ETFWriter {
         return this;
     }
     
-    public ETFWriter writeLargeBig(long num) {
+    public ETFWriter writeLargeBig(long num, byte sign) {
         if (num == 0) {
             writeToBuffer(LARGE_BIG_EXT, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0);
         } else {
-            byte signum = num < 0 ? (byte) 1 : (byte) 0;
+            byte signum = sign < 0 ? (byte) 1 : (byte) 0;
             num = Math.abs(num);
             int n = (int) Math.ceil(Math.log(num)/Math.log(256))+1; //Equivalent to Math.ceil(log256(num)) + 1
             byte[] bytes = new byte[n];
@@ -424,12 +424,16 @@ public class ETFWriter {
         return this;
     }
     
-    public ETFWriter writeBigNumber(Long num) {
+    public ETFWriter writeBigNumber(long num, byte sign) {
         if ((int) Math.ceil(Math.log(num) / Math.log(256)) + 1 > 256) //Equivalent to Math.ceil(log256(num)) + 1)
-			writeLargeBig(num);
+			writeLargeBig(num, sign);
 		else
-			writeSmallBig(num);
+			writeSmallBig(num, sign);
         return this;
+    }
+    
+    public ETFWriter writeBigNumber(long num) {
+        return writeBigNumber(num, (byte) 1); //TODO Maybe we shouldn't assume unsigned
     }
     
     public ETFWriter writeOldReference(Reference reference) {

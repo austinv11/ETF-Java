@@ -677,10 +677,10 @@ public class ETFParser {
         return new ErlangList(list, tail);
     }
 
-    private Long nextBig(long len) {
+    private long nextBig(long len) {
         int sign = Byte.toUnsignedInt(data[offset++]);
         
-        Long total = 0L;
+        long total = 0L;
         //Sorry for this algorithm but its what the docs say to do
         for (long i = 0; i < len; i++) {
             total += Byte.toUnsignedInt(data[offset++]) * (long)Math.pow(256, i);
@@ -703,7 +703,7 @@ public class ETFParser {
      * @return The small big number.
      */
     @BertCompatible
-    public Long nextSmallBig() {
+    public long nextSmallBig() {
         checkPreconditions(SMALL_BIG_EXT);
 
         return nextBig(Byte.toUnsignedInt(data[offset++]));
@@ -715,7 +715,7 @@ public class ETFParser {
      * @return The large big number.
      */
     @BertCompatible
-    public Long nextLargeBig() {
+    public long nextLargeBig() {
         checkPreconditions(LARGE_BIG_EXT);
 
         long len = Integer.toUnsignedLong(wrap(data, offset, 4).getInt());
@@ -730,7 +730,7 @@ public class ETFParser {
      * @return The big number.
      */
     @BertCompatible
-    public Long nextBigNumber() {
+    public long nextBigNumber() {
         if (peek() == SMALL_BIG_EXT) {
             return nextSmallBig();
         } else {
