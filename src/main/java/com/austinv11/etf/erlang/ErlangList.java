@@ -22,10 +22,16 @@ public class ErlangList extends AbstractList<Object> implements ErlangObject {
 
     @Override
     public Object get(int index) {
+        Object obj;
         if (index == data.length)
-            return tail;
-
-        return data[index];
+            obj = tail;
+        else
+            obj = data[index];
+    
+        if (obj instanceof byte[])
+            return new String((byte[]) obj);
+        
+        return obj;
     }
 
     @Override
@@ -118,7 +124,11 @@ public class ErlangList extends AbstractList<Object> implements ErlangObject {
      * @return The object.
      */
     public String getString(int index) {
-        return (String) get(index);
+        Object obj = get(index);
+        if (obj instanceof String)
+            return (String) obj;
+        else
+            return new String((byte[]) obj);
     }
 
     /**

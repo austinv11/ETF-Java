@@ -32,7 +32,10 @@ public class ErlangMap extends AbstractMap<Object, Object> implements ErlangObje
 
     @Override
     public Object get(Object key) {
-        return data.get(key);
+        Object obj = data.get(key);
+        if (obj instanceof byte[])
+            return new String((byte[]) obj);
+        return obj;
     }
 
     /**
@@ -120,7 +123,11 @@ public class ErlangMap extends AbstractMap<Object, Object> implements ErlangObje
      * @return The object.
      */
     public String getString(Object key) {
-        return (String) get(key);
+        Object obj = get(key);
+        if (obj instanceof String)
+            return (String) obj;
+        else
+            return new String((byte[]) obj);
     }
 
     /**
