@@ -7,7 +7,6 @@ import com.austinv11.etf.util.ETFException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.*;
@@ -678,21 +677,21 @@ public class ETFParser {
         return new ErlangList(list, tail);
     }
 
-    private BigInteger nextBig(long len) {
+    private Long nextBig(long len) {
         int sign = Byte.toUnsignedInt(data[offset++]);
-
-        BigInteger total = BigInteger.valueOf(0);
+        
+        Long total = 0L;
         //Sorry for this algorithm but its what the docs say to do
         for (long i = 0; i < len; i++) {
-            total = total.add(BigInteger.valueOf(Byte.toUnsignedInt(data[offset++]) * (long)Math.pow(256, i)));
+            total += Byte.toUnsignedInt(data[offset++]) * (long)Math.pow(256, i);
         }
 
         if (sign == 0) { //Positive
-            if (total.signum() == -1)
-                total = total.negate();
+            if (total < 0)
+                total *= -1;
         } else if (sign == 1) { //Negative
-            if (total.signum() == 1)
-                total = total.negate();
+            if (total > 0)
+                total *= -1;
         }
 
         return total;
@@ -704,7 +703,7 @@ public class ETFParser {
      * @return The small big number.
      */
     @BertCompatible
-    public BigInteger nextSmallBig() {
+    public Long nextSmallBig() {
         checkPreconditions(SMALL_BIG_EXT);
 
         return nextBig(Byte.toUnsignedInt(data[offset++]));
@@ -716,7 +715,7 @@ public class ETFParser {
      * @return The large big number.
      */
     @BertCompatible
-    public BigInteger nextLargeBig() {
+    public Long nextLargeBig() {
         checkPreconditions(LARGE_BIG_EXT);
 
         long len = Integer.toUnsignedLong(wrap(data, offset, 4).getInt());
@@ -731,7 +730,7 @@ public class ETFParser {
      * @return The big number.
      */
     @BertCompatible
-    public BigInteger nextBigNumber() {
+    public Long nextBigNumber() {
         if (peek() == SMALL_BIG_EXT) {
             return nextSmallBig();
         } else {
