@@ -36,7 +36,11 @@ public class Mapper {
 		List<PropertyManager> properties = ReflectionUtils.findProperties(instance, clazz);
 		for (PropertyManager property : properties) {
 			if (data.containsKey(property.getName())) {
-				property.setValue(data.get(property.getName()));
+				Object obj = data.get(property.getName());
+				if (obj instanceof ErlangMap) {
+					obj = read((ErlangMap) obj, property.getType());
+				}
+				property.setValue(obj);
 			}
 		}
 		return instance;

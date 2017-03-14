@@ -153,6 +153,7 @@ public class ReflectionUtils {
 		private final IPropertyMutator mutator;
 		private final IPropertyAccessor accessor;
 		private final String name;
+		private final Class<?> type;
 		
 		private static String capitalize(String s) {
 			return s.substring(0, 1).toUpperCase() + (s.length() > 1 ? s.substring(1) : "");
@@ -161,6 +162,7 @@ public class ReflectionUtils {
 		public PropertyManager(Object instance, Field field) {
 			this.instance = instance;
 			field.setAccessible(true);
+			this.type = field.getType();
 			IPropertyAccessor accessor = null;
 			boolean isFinal = Modifier.isFinal(field.getModifiers());
 			IPropertyMutator mutator = isFinal ? NOPAccessorAndMutator.INSTANCE : null;
@@ -214,6 +216,10 @@ public class ReflectionUtils {
 		
 		public String getName() {
 			return name;
+		}
+		
+		public Class<?> getType() {
+			return type;
 		}
 	}
 }
