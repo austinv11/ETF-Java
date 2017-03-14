@@ -377,6 +377,16 @@ public class ETFParser {
             return nextSmallUTF8Atom();
         }
     }
+    
+    /**
+     * Gets the next atom (small or large and latin-1 or utf-8) as an enum.
+     *
+     * @param enumClass The enum this atom represents.
+     * @return The atom.
+     */
+    public <T extends Enum<T>> T nextAtom(Class<T> enumClass) {
+        return Enum.valueOf(enumClass, nextAtom());
+    }
 
     /**
      * Gets the next boolean (expects the boolean to be encoded as an atom!),

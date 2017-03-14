@@ -292,8 +292,12 @@ public class ETFWriter {
             return writeMap((Map) o);
         } else {
             Map<String, Object> properties = new HashMap<>();
-            for (ReflectionUtils.PropertyManager property : ReflectionUtils.findProperties(o, o.getClass()))
-                properties.put(property.getName(), property.getValue());
+            for (ReflectionUtils.PropertyManager property : ReflectionUtils.findProperties(o, o.getClass())) {
+                if (property.getType().isEnum())
+                    properties.put(property.getName(), Enum.valueOf(property.getType(), property.getValue().toString()));
+                else
+                    properties.put(property.getName(), property.getValue());
+            }
             return writeMap(properties);
         }
     }
@@ -596,6 +600,9 @@ public class ETFWriter {
                 writeAtom((String) o); //TODO should we optimize for other types?
             else
                 writeBinary((String) o);
+            return;
+        } else if (o instanceof Enum) {
+            writeAtom(((Enum) o).name());
             return;
         } else {
             writeMap(o);
