@@ -186,7 +186,7 @@ public class ReflectionUtils {
 						continue;
 					}
 				} else if (!isFinal && m.getDeclaredAnnotation(SetterMethod.class) != null
-						&& m.getParameterCount() == 1 && m.getParameterTypes()[0].equals(field.getType())) {
+						&& m.getParameterCount() == 1) {
 					if (m.getDeclaredAnnotation(SetterMethod.class).value().equals(field.getName())) {
 						mutator = new MethodAccessorAndMutator(instance, m);
 						continue;
