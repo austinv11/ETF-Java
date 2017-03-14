@@ -2,6 +2,7 @@ package com.austinv11.etf.util;
 
 import com.austinv11.etf.ETFConfig;
 import com.austinv11.etf.common.TermTypes;
+import com.austinv11.etf.erlang.ErlangList;
 import com.austinv11.etf.erlang.ErlangMap;
 import com.austinv11.etf.parsing.ETFParser;
 import com.austinv11.etf.util.ReflectionUtils.PropertyManager;
@@ -39,6 +40,8 @@ public class Mapper {
 				Object obj = data.get(property.getName());
 				if (obj instanceof ErlangMap) {
 					obj = read((ErlangMap) obj, property.getType());
+				} else if (obj instanceof ErlangList && property.getType().isArray()) {
+					obj = ((ErlangList) obj).toArray();
 				}
 				property.setValue(obj);
 			}
