@@ -25,6 +25,9 @@ public class ReflectionUtils {
 	}
 	
 	public static List<PropertyManager> findProperties(Object instance, Class clazz) {
+		if (clazz.isPrimitive())
+			return new ArrayList<>();
+		
 		List<PropertyManager> properties = new ArrayList<>();
 		for (Field field : getAllFields(clazz)) {
 			if (!Modifier.isTransient(field.getModifiers())) {
@@ -49,11 +52,31 @@ public class ReflectionUtils {
 	}
 	
 	public static <T> T createInstance(Class<T> clazz) {
-//		if (UNSAFE != null) { //Unsafe available, use it to instantiate the class
-//			try {
-//				return (T) ((sun.misc.Unsafe) UNSAFE).allocateInstance(clazz);
-//			} catch (InstantiationException e) {}
-//		}
+		if (int.class.equals(clazz) || Integer.class.equals(clazz)) {
+			return (T)(Integer) 0;
+		} else if (long.class.equals(clazz) || Long.class.equals(clazz)) {
+			return (T)(Long) 0L;
+		} else if (double.class.equals(clazz) || Double.class.equals(clazz)) {
+			return (T)(Double) 0D;
+		} else if (void.class.equals(clazz) || Void.class.equals(clazz)) {
+			return null;
+		} else if (float.class.equals(clazz) || Float.class.equals(clazz)) {
+			return (T)(Float) 0F;
+		} else if (byte.class.equals(clazz) || Byte.class.equals(clazz)) {
+			return (T)(Byte)(byte) 0;
+		} else if (char.class.equals(clazz) || Character.class.equals(clazz)) {
+			return (T)(Character)(char) 0;
+		} else if (boolean.class.equals(clazz) || Boolean.class.equals(clazz)) {
+			return (T)(Boolean) false;
+		} else if (short.class.equals(clazz) || Short.class.equals(clazz)) {
+			return (T)(Short)(short) 0;
+		}
+			
+		if (UNSAFE != null) { //Unsafe available, use it to instantiate the class
+			try {
+				return (T) ((sun.misc.Unsafe) UNSAFE).allocateInstance(clazz);
+			} catch (InstantiationException e) {}
+		}
 		
 		//Fallback to reflection
 		try {
