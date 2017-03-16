@@ -8,6 +8,7 @@ import com.austinv11.etf.parsing.ETFParser;
 import com.austinv11.etf.util.ReflectionUtils.PropertyManager;
 import com.austinv11.etf.writing.ETFWriter;
 
+import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +42,7 @@ public class Mapper {
 				if (obj instanceof ErlangMap) {
 					obj = read((ErlangMap) obj, property.getType());
 				} else if (obj instanceof ErlangList && property.getType().isArray()) {
-					obj = ((ErlangList) obj).toArray();
+					obj = ((ErlangList) obj).toArray((T[]) Array.newInstance(property.getType().getComponentType(), ((ErlangList) obj).size()));
 				}
 				property.setValue(obj);
 			}
