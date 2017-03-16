@@ -49,11 +49,11 @@ public class ReflectionUtils {
 	}
 	
 	public static <T> T createInstance(Class<T> clazz) {
-		if (UNSAFE != null) { //Unsafe available, use it to instantiate the class
-			try {
-				return (T) ((sun.misc.Unsafe) UNSAFE).allocateInstance(clazz);
-			} catch (InstantiationException e) {}
-		}
+//		if (UNSAFE != null) { //Unsafe available, use it to instantiate the class
+//			try {
+//				return (T) ((sun.misc.Unsafe) UNSAFE).allocateInstance(clazz);
+//			} catch (InstantiationException e) {}
+//		}
 		
 		//Fallback to reflection
 		try {
