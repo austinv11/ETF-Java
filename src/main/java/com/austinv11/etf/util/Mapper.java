@@ -42,7 +42,10 @@ public class Mapper {
 				if (obj instanceof ErlangMap) {
 					obj = read((ErlangMap) obj, property.getType());
 				} else if (obj instanceof ErlangList && property.getType().isArray()) {
-					obj = ((ErlangList) obj).toArray((T[]) Array.newInstance(property.getType().getComponentType(), ((ErlangList) obj).size()));
+					if (((ErlangList) obj).size() > 0)
+						obj = ((ErlangList) obj).toArray((T[]) Array.newInstance(property.getType().getComponentType(), ((ErlangList) obj).size()));
+					else
+						obj = Array.newInstance(property.getType().getComponentType(), 0);
 				}
 				property.setValue(obj);
 			}
