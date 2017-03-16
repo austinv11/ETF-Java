@@ -218,7 +218,7 @@ public class ReflectionUtils {
 			return name;
 		}
 		
-		public Class getType() {
+		public Class<?> getType() {
 			return type;
 		}
 	}
