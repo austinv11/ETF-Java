@@ -303,7 +303,11 @@ public class ETFWriter {
     }
     
     public ETFWriter writeNil() {
-        if (loqui)
+        return writeNil(false);
+    }
+    
+    public ETFWriter writeNil(boolean forceNonLoqui) {
+        if (loqui && !forceNonLoqui)
             writeAtom("nil");
         else
             writeToBuffer(NIL_EXT);
@@ -316,7 +320,7 @@ public class ETFWriter {
                 (byte) (list.size() & 0xFF));
         for (T obj : list)
             write(obj);
-        writeNil(); //The tail is nil so that this can be a proper list
+        writeNil(true); //The tail is nil so that this can be a proper list
         return this;
     } 
     
@@ -326,7 +330,7 @@ public class ETFWriter {
                 (byte) (list.length & 0xFF));
         for (T obj : list)
             write(obj);
-        writeNil(); //The tail is nil so that this can be a proper list
+        writeNil(true); //The tail is nil so that this can be a proper list
         return this;
     }
     

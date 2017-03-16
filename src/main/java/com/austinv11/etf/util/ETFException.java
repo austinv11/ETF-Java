@@ -52,7 +52,7 @@ public class ETFException extends RuntimeException {
         if (position != -1) {
             message += "\n ";
             for (int i = 0; i < position; i++) {
-                String byteStringVal = String.valueOf(data[position]);
+                String byteStringVal = String.valueOf(data[i]);
                 for (int j = 0; j < byteStringVal.length(); j++)
                     message += " ";
                 message += "  ";
