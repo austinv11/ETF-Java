@@ -40,7 +40,7 @@ public class ETFParser {
 
         if (!partial && config.isIncludingHeader()) {
             if (data[initialOffset] != HEADER)
-                throw new ETFException("Missing header! Is this data malformed?");
+                throw new ETFException("Missing header! Is this data malformed?").withData(data, initialOffset);
             initialOffset++;
 
             long uncompressedSize = wrap(data, initialOffset, 4).getInt();
@@ -60,7 +60,7 @@ public class ETFParser {
                 outputStream.close();
                 this.data = outputStream.toByteArray();
             } catch (Exception e) {
-                throw new ETFException(e);
+                throw new ETFException(e).withData(data, initialOffset);
             }
         } else {
             this.data = data;
@@ -153,14 +153,14 @@ public class ETFParser {
         }
 
         if (isFinished()) {
-            throw new ETFException("No more data to read!");
+            throw new ETFException("No more data to read!").withData(data, offset);
         }
 
         skipVersion();
 
         if (type != -1) {
             if (type != peek()) {
-                throw new ETFException("ETF Term type mismatch!");
+                throw new ETFException("ETF Term type mismatch!").withData(data, offset);
             } else {
                 offset++;
             }
@@ -303,7 +303,7 @@ public class ETFParser {
         try {
             return new String(Arrays.copyOfRange(data, offset, (offset += len)), "ISO-8859-1" /*Latin-1 charset*/);
         } catch (UnsupportedEncodingException e) {
-            throw new ETFException(e);
+            throw new ETFException(e).withData(data, offset-len);
         }
     }
 
@@ -320,7 +320,7 @@ public class ETFParser {
         try {
             return new String(Arrays.copyOfRange(data, offset, (offset += len)), "ISO-8859-1" /*Latin-1 charset*/);
         } catch (UnsupportedEncodingException e) {
-            throw new ETFException(e);
+            throw new ETFException(e).withData(data, offset-len);
         }
     }
 
@@ -338,7 +338,7 @@ public class ETFParser {
         try {
             return new String(Arrays.copyOfRange(data, offset, (offset += len)), "UTF8");
         } catch (UnsupportedEncodingException e) {
-            throw new ETFException(e);
+            throw new ETFException(e).withData(data, offset-len);
         }
     }
 
@@ -355,7 +355,7 @@ public class ETFParser {
         try {
             return new String(Arrays.copyOfRange(data, offset, (offset += len)), "UTF8");
         } catch (UnsupportedEncodingException e) {
-            throw new ETFException(e);
+            throw new ETFException(e).withData(data, offset-len);
         }
     }
 
@@ -881,7 +881,7 @@ public class ETFParser {
     public Object next() {
         switch (peek()) {
             case HEADER:
-                throw new ETFException("Nested header found! Is the data malformed?");
+                throw new ETFException("Nested header found! Is the data malformed?").withData(data, offset);
             case DISTRIBUTION_HEADER:
                 return nextDistributionHeader();
             case ATOM_CACHE_REF:
@@ -938,7 +938,7 @@ public class ETFParser {
             case SMALL_ATOM_UTF8_EXT:
                 return handleWeirdAtoms(nextSmallUTF8Atom());
             default:
-                throw new ETFException("Unidentified type " + peek() + " is the data malformed?");
+                throw new ETFException("Unidentified type " + peek() + " is the data malformed?").withData(data, offset);
         }
     }
 

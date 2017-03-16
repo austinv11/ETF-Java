@@ -482,65 +482,65 @@ public class ETFWriter {
      *
      * @throws com.austinv11.etf.util.ETFException When the object isn't supported.
      */
-    public void write(Object o) {
+    public ETFWriter write(Object o) {
         if (o == null) {
             writeNil();
-            return;
+            return this;
         } else if (o instanceof Number) {
             if (o instanceof BigInteger) {
                 writeBigNumber((BigInteger) o);
-                return;
+                return this;
             } else if (o instanceof Short || o instanceof Byte || o instanceof Integer) {
                 writeInt(((Number) o).intValue());
-                return;
+                return this;
             } else if (o instanceof Long) {
                 writeBigNumber((long) o);
-                return;
+                return this;
             } else if (o instanceof Float || o instanceof Double) {
                 writeFloat(((Number) o).doubleValue());
-                return;
+                return this;
             }
         } else if (o instanceof Boolean) {
             writeBoolean((Boolean) o);
-            return;
+            return this;
         } else if (o instanceof Character) {
             writeAtom(o.toString());
-            return;
+            return this;
         } else if (o instanceof ErlangObject) {
             if (o instanceof DistributionHeader) {
                 //TODO
-                return;
+                return this;
             } else if (o instanceof ErlangList) {
                 writeList((ErlangList) o);
-                return;
+                return this;
             } else if (o instanceof ErlangMap) {
                 writeMap((ErlangMap) o);
-                return;
+                return this;
             } else if (o instanceof Fun) {
                 //TODO
-                return;
+                return this;
             } else if (o instanceof PID) {
                 //TODO
-                return;
+                return this;
             } else if (o instanceof Port) {
                 //TODO
-                return;
+                return this;
             } else if (o instanceof Reference) {
                 //TODO
-                return;
+                return this;
             } else if (o instanceof Tuple) {
                 writeTuple((Tuple) o);
-                return;
+                return this;
             }
         } else if (o instanceof Map) {
             writeMap((Map) o);
-            return;
+            return this;
         } else if (o instanceof Collection) {
             if (o instanceof List)
                 writeList((List) o);
             else
                 writeTuple((Collection) o);
-            return;
+            return this;
         } else if (o.getClass().isArray()) {
             if (o instanceof byte[] || o instanceof Byte[]) {
                 if (o instanceof Byte[]) {
@@ -550,7 +550,7 @@ public class ETFWriter {
                     o = newArray;
                 }
                 writeBinary((byte[]) o);
-                return;
+                return this;
             } else if (o instanceof char[] || o instanceof Character[]) {
                 if (o instanceof Character[]) {
                     char[] newArray = new char[((Character[]) o).length];
@@ -559,7 +559,7 @@ public class ETFWriter {
                     o = newArray;
                 }
                 writeBinary(new String((char[]) o)); //TODO should we optimize for other types?
-                return;
+                return this;
             } else {
                 if (o instanceof boolean[]) {
                     Boolean[] newArray = new Boolean[((boolean[]) o).length];
@@ -593,20 +593,20 @@ public class ETFWriter {
                     o = newArray;
                 }
                 writeTuple((Object[]) o); //TODO: maybe configure into list?
-                return;
+                return this;
             }
         } else if (o instanceof String) {
             if (!loqui || o.equals("true") || o.equals("false") || o.equals("nil"))
                 writeAtom((String) o); //TODO should we optimize for other types?
             else
                 writeBinary((String) o);
-            return;
+            return this;
         } else if (o instanceof Enum) {
             writeAtom(((Enum) o).name());
-            return;
+            return this;
         } else {
             writeMap(o);
-            return;
+            return this;
         }
         
         throw new ETFException("Unknown object type "+o.getClass());

@@ -13,13 +13,13 @@ import java.util.List;
  */
 public class ReflectionUtils {
 	
-	public static sun.misc.Unsafe UNSAFE;
+	public static Object UNSAFE;
 	
 	static {
 		try {
 			Field theUnsafe = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
 			theUnsafe.setAccessible(true);
-			UNSAFE = (sun.misc.Unsafe) theUnsafe.get(null);
+			UNSAFE = theUnsafe.get(null);
 		} catch (Throwable e) {
 			UNSAFE = null; //Unsafe unavailable
 		}
@@ -52,7 +52,7 @@ public class ReflectionUtils {
 	public static <T> T createInstance(Class<T> clazz) {
 		if (UNSAFE != null) { //Unsafe available, use it to instantiate the class
 			try {
-				return (T) UNSAFE.allocateInstance(clazz);
+				return (T) ((sun.misc.Unsafe) UNSAFE).allocateInstance(clazz);
 			} catch (InstantiationException e) {}
 		}
 		
