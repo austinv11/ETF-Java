@@ -1,7 +1,6 @@
 package com.austinv11.etf.util;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -89,8 +88,8 @@ public class ReflectionUtils {
 		public Object get() {
 			try {
 				return field.get(object);
-			} catch (IllegalAccessException e) {
-				throw new ETFException(e);
+			} catch (Exception e) {
+				throw new ETFException("Cannot access " + field.toGenericString(), e);
 			}
 		}
 		
@@ -98,8 +97,8 @@ public class ReflectionUtils {
 		public void set(Object o) {
 			try {
 				field.set(object, o);
-			} catch (IllegalAccessException e) {
-				throw new ETFException(e);
+			} catch (Exception e) {
+				throw new ETFException("Cannot modify " + field.toGenericString(), e);
 			}
 		}
 	}
@@ -119,8 +118,8 @@ public class ReflectionUtils {
 		public Object get() {
 			try {
 				return method.invoke(object);
-			} catch (IllegalAccessException | InvocationTargetException e) {
-				throw new ETFException(e);
+			} catch (Exception e) {
+				throw new ETFException("Cannot invoke " + method.toGenericString(), e);
 			}
 		}
 		
@@ -128,8 +127,8 @@ public class ReflectionUtils {
 		public void set(Object o) {
 			try {
 				method.invoke(object, o);
-			} catch (IllegalAccessException | InvocationTargetException e) {
-				throw new ETFException(e);
+			} catch (Exception e) {
+				throw new ETFException("Cannot invoke " + method.toGenericString(), e);
 			}
 		}
 	}
