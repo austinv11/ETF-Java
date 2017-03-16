@@ -293,8 +293,8 @@ public class ETFWriter {
         } else {
             Map<String, Object> properties = new HashMap<>();
             for (ReflectionUtils.PropertyManager property : ReflectionUtils.findProperties(o, o.getClass())) {
-                if (property.getType().isEnum())
-                    properties.put(property.getName(), Enum.valueOf((Class) property.getType(), property.getValue().toString()));
+                if (property.getGetterType().isEnum())
+                    properties.put(property.getName(), Enum.valueOf((Class) property.getGetterType(), property.getValue().toString()));
                 else
                     properties.put(property.getName(), property.getValue());
             }

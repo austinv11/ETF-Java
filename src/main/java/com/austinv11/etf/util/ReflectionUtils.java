@@ -66,11 +66,15 @@ public class ReflectionUtils {
 	public interface IPropertyAccessor {
 		
 		Object get();
+		
+		Class<?> getType();
 	}
 	
 	public interface IPropertyMutator {
 		
 		void set(Object o);
+		
+		Class<?> getType();
 	}
 	
 	public static class FieldAccessorAndMutator implements IPropertyAccessor, IPropertyMutator {
@@ -100,6 +104,11 @@ public class ReflectionUtils {
 			} catch (Exception e) {
 				throw new ETFException("Cannot modify " + field.toGenericString(), e);
 			}
+		}
+		
+		@Override
+		public Class<?> getType() {
+			return field.getType();
 		}
 	}
 	
@@ -131,6 +140,11 @@ public class ReflectionUtils {
 				throw new ETFException("Cannot invoke " + method.toGenericString(), e);
 			}
 		}
+		
+		@Override
+		public Class<?> getType() {
+			return method.getParameterCount() == 0 ? method.getReturnType() : method.getParameterTypes()[0];
+		}
 	}
 	
 	public static class NOPAccessorAndMutator implements IPropertyAccessor, IPropertyMutator {
@@ -144,6 +158,11 @@ public class ReflectionUtils {
 		
 		@Override
 		public void set(Object o) {}
+		
+		@Override
+		public Class<?> getType() {
+			return Void.class;
+		}
 	}
 	
 	public static class PropertyManager {
@@ -152,7 +171,6 @@ public class ReflectionUtils {
 		private final IPropertyMutator mutator;
 		private final IPropertyAccessor accessor;
 		private final String name;
-		private final Class<?> type;
 		
 		private static String capitalize(String s) {
 			return s.substring(0, 1).toUpperCase() + (s.length() > 1 ? s.substring(1) : "");
@@ -161,7 +179,6 @@ public class ReflectionUtils {
 		public PropertyManager(Object instance, Field field) {
 			this.instance = instance;
 			field.setAccessible(true);
-			this.type = field.getType();
 			IPropertyAccessor accessor = null;
 			boolean isFinal = Modifier.isFinal(field.getModifiers());
 			IPropertyMutator mutator = isFinal ? NOPAccessorAndMutator.INSTANCE : null;
@@ -217,8 +234,12 @@ public class ReflectionUtils {
 			return name;
 		}
 		
-		public Class<?> getType() {
-			return type;
+		public Class<?> getSetterType() {
+			return mutator.getType();
+		}
+		
+		public Class<?> getGetterType() {
+			return accessor.getType();
 		}
 	}
 }

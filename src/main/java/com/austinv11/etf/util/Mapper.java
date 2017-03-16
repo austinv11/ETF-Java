@@ -40,20 +40,20 @@ public class Mapper {
 			if (data.containsKey(property.getName())) {
 				Object obj = data.get(property.getName());
 				if (obj instanceof ErlangMap) {
-					obj = read((ErlangMap) obj, property.getType());
-				} else if (obj instanceof ErlangList && property.getType().isArray()) {
+					obj = read((ErlangMap) obj, property.getSetterType());
+				} else if (obj instanceof ErlangList && property.getSetterType().isArray()) {
 					if (((ErlangList) obj).size() > 0) {
-						T[] array = (T[]) Array.newInstance(property.getType().getComponentType(), ((ErlangList) obj).size());
+						T[] array = (T[]) Array.newInstance(property.getSetterType().getComponentType(), ((ErlangList) obj).size());
 						for (int i = 0; i < array.length; i++) {
 							Object obj1 = ((ErlangList) obj).get(i);
 							if (obj1 != null)
-								array[i] = obj1 instanceof ErlangMap ? read(data, (Class<T>) property.getType().getComponentType()) : (T) obj1;
+								array[i] = obj1 instanceof ErlangMap ? read(data, (Class<T>) property.getSetterType().getComponentType()) : (T) obj1;
 							else
 								array[i] = null;
 						}
 						obj = array;
 					} else
-						obj = Array.newInstance(property.getType().getComponentType(), 0);
+						obj = Array.newInstance(property.getSetterType().getComponentType(), 0);
 				}
 				property.setValue(obj);
 			}
