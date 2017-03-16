@@ -5,6 +5,8 @@
       <module name="ETF-Java_jmh" target="1.8" />
       <module name="ETF-Java_main" target="1.8" />
       <module name="ETF-Java_test" target="1.8" />
+      <module name="gui_main" target="1.5" />
+      <module name="gui_test" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>

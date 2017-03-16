@@ -1,2 +1,4 @@
 rootProject.name = 'ETF-Java'
+include 'gui'
+include 'gui'
 

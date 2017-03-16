@@ -592,7 +592,7 @@ public class ETFWriter {
                         newArray[i] = ((double[]) o)[i];
                     o = newArray;
                 }
-                writeTuple((Object[]) o); //TODO: maybe configure into list?
+                writeList((Object[]) o); 
                 return this;
             }
         } else if (o instanceof String) {
