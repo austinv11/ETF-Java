@@ -51,7 +51,7 @@ public class Mapper {
 							else
 								array[i] = null;
 						}
-						obj = ((ErlangList) obj).toArray();
+						obj = array;
 					} else
 						obj = Array.newInstance(property.getType().getComponentType(), 0);
 				}
