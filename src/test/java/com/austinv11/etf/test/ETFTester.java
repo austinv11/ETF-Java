@@ -23,7 +23,6 @@ public class ETFTester {
     public static final char[] MAP = {131,116,0,0,0,1,109,0,0,0,1,100,97,10};
     public static final char[] LIST = {131,108,0,0,0,3,97,1,97,2,97,3,106};
     public static final char[] NIL = {131, 106};
-    public static final byte[] TEST = {-125, 116, 0, 0, 0, 4, 109, 0, 0, 0, 2, 111, 112, 98, 0, 0, 0, 2, 109, 0, 0, 0, 1, 115, 115, 3, 110, 105, 108, 109, 0, 0, 0, 1, 116, 115, 3, 110, 105, 108, 109, 0, 0, 0, 1, 100, 116, 0, 0, 0, 5, 109, 0, 0, 0, 8, 99, 111, 109, 112, 114, 101, 115, 115, 115, 4, 116, 114, 117, 101, 109, 0, 0, 0, 5, 115, 104, 97, 114, 100, 108, 0, 0, 0, 2, 98, 0, 0, 0, 0, 98, 0, 0, 0, 1, 106, 109, 0, 0, 0, 15, 108, 97, 114, 103, 101, 95, 116, 104, 114, 101, 115, 104, 111, 108, 100, 98, 0, 0, 0, -6, 109, 0, 0, 0, 10, 112, 114, 111, 112, 101, 114, 116, 105, 101, 115, 116, 0, 0, 0, 5, 109, 0, 0, 0, 7, 36, 100, 101, 118, 105, 99, 101, 109, 0, 0, 0, 9, 68, 105, 115, 99, 111, 114, 100, 52, 74, 109, 0, 0, 0, 17, 36, 114, 101, 102, 101, 114, 114, 105, 110, 103, 95, 100, 111, 109, 97, 105, 110, 109, 0, 0, 0, 0, 109, 0, 0, 0, 3, 36, 111, 115, 109, 0, 0, 0, 8, 77, 97, 99, 32, 79, 83, 32, 88, 109, 0, 0, 0, 8, 36, 98, 114, 111, 119, 115, 101, 114, 109, 0, 0, 0, 9, 68, 105, 115, 99, 111, 114, 100, 52, 74, 109, 0, 0, 0, 9, 36, 114, 101, 102, 101, 114, 114, 101, 114, 109, 0, 0, 0, 0, 109, 0, 0, 0, 5, 116, 111, 107, 101, 110, 109, 0, 0, 0, 63, 66, 111, 116, 32, 77, 84, 89, 119, 79, 68, 77, 52, 77, 122, 103, 120, 77, 122, 77, 49, 78, 106, 65, 53, 77, 122, 81, 48, 46, 67, 99, 56, 95, 54, 103, 46, 66, 104, 87, 102, 117, 85, 48, 101, 90, 109, 68, 98, 49, 74, 120, 87, 114, 83, 82, 102, 90, 114, 103, 83, 85, 82, 103};
     public static final ETFConfig CONFIG = new ETFConfig()
             .setIncludeHeader(false)
             .setCompression(false)
@@ -54,9 +53,6 @@ public class ETFTester {
     }
     
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        ETFParser parser = CONFIG.setIncludeHeader(true).createParser(TEST, true);
-        printParser(parser);
-        
         readEtf(ETFTester.class.getResourceAsStream("/test.etf"));
 
         readJson(ETFTester.class.getResourceAsStream("/test.json"));
@@ -98,11 +94,15 @@ public class ETFTester {
 
         buffer.flush();
 
-        byte[] dataArray = buffer.toByteArray();
-
+        int[] dataArray = Arrays.stream(buffer.toString().replaceFirst("<", "").replace(">", "").replace("\n", "").split(", ")).mapToInt(Integer::parseInt).toArray();
+        byte[] bytes = new byte[dataArray.length];
+        for (int i = 0; i < dataArray.length; i++)
+            bytes[i] = (byte) dataArray[i];
+        
         System.out.println("ETF: ");
         long init = System.currentTimeMillis();
-        System.out.println(CONFIG.createParser(dataArray, true).nextMap().toString());
+        System.out.println(Arrays.toString(bytes));
+        System.out.println(CONFIG.createParser(bytes, true).nextMap().toString());
         System.out.println(System.currentTimeMillis() - init);
     }
 

@@ -4,9 +4,7 @@ import com.austinv11.etf.common.TermTypes;
 import com.austinv11.etf.util.BertCompatible;
 
 import java.math.BigInteger;
-import java.util.AbstractMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This represents an immutable ETF list. 
@@ -228,5 +226,40 @@ public class ErlangMap extends AbstractMap<Object, Object> implements ErlangObje
     @Override
     public void clear() {
         throw new UnsupportedOperationException();
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("{");
+        data.forEach((k, v) -> builder.append(objToString(k)).append("=").append(objToString(v)).append(", "));
+        builder.replace(builder.length() - 2, builder.length(), "");
+        builder.append("}");
+        return builder.toString();
+    }
+    
+    private String objToString(Object val) {
+        if (val == null)
+            return "null";
+        else if (val instanceof byte[])
+            return new String((byte[]) val);
+        else if (val.getClass().isArray()) {
+            if (val instanceof char[]) {
+                return Arrays.toString((char[]) val);
+            } else if (val instanceof int[]) {
+                return Arrays.toString((int[]) val);
+            } else if (val instanceof long[]) {
+                return Arrays.toString((long[]) val);
+            } else if (val instanceof float[]) {
+                return Arrays.toString((float[]) val);
+            } else if (val instanceof double[]) {
+                return Arrays.toString((double[]) val);
+            } else if (val instanceof boolean[]) {
+                return Arrays.toString((boolean[]) val);
+            } else {
+                return Arrays.toString((Object[]) val);
+            }
+        } else
+            return val.toString();
     }
 }
