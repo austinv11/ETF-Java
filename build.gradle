@@ -17,7 +17,6 @@ buildscript {
 apply plugin: 'java'
 apply plugin: "me.champeau.gradle.jmh"
 apply plugin: 'idea'
-apply plugin: 'application'
 apply plugin: 'maven'
 apply plugin: 'com.github.johnrengelman.shadow'
 
@@ -51,4 +50,14 @@ artifacts {
     archives sourcesJar
     archives javadocJar
     archives shadowJar
+}
+
+compileJava {
+    options.compilerArgs << '-XDignore.symbol.file'
+    options.fork = true
+    options.forkOptions.executable = 'javac'
+}
+
+javadoc {
+    failOnError false
 }

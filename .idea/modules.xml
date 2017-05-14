@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/ETF-Java.iml" filepath="$PROJECT_DIR$/.idea/modules/ETF-Java.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/gui/ETF-Java-gui.iml" filepath="$PROJECT_DIR$/.idea/modules/gui/ETF-Java-gui.iml" group="gui" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/gui/ETF-Java-gui~1.iml" filepath="$PROJECT_DIR$/.idea/modules/gui/ETF-Java-gui~1.iml" group="gui" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/ETF-Java_jmh.iml" filepath="$PROJECT_DIR$/.idea/modules/ETF-Java_jmh.iml" group="ETF-Java" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/ETF-Java_main.iml" filepath="$PROJECT_DIR$/.idea/modules/ETF-Java_main.iml" group="ETF-Java" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/ETF-Java_test.iml" filepath="$PROJECT_DIR$/.idea/modules/ETF-Java_test.iml" group="ETF-Java" />
