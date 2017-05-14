@@ -233,7 +233,8 @@ public class ErlangMap extends AbstractMap<Object, Object> implements ErlangObje
         StringBuilder builder = new StringBuilder();
         builder.append("{");
         data.forEach((k, v) -> builder.append(objToString(k)).append("=").append(objToString(v)).append(", "));
-        builder.replace(builder.length() - 2, builder.length(), "");
+        if (builder.length() > 2)
+            builder.replace(builder.length() - 2, builder.length(), "");
         builder.append("}");
         return builder.toString();
     }
