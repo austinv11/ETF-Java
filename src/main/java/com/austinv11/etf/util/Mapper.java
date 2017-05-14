@@ -52,6 +52,8 @@ public class Mapper {
 						obj = array;
 					} else
 						obj = Array.newInstance(property.getSetterType().getComponentType(), 0);
+				} else if (obj == null && property.getSetterType().isArray()) {
+					obj = Array.newInstance(property.getSetterType().getComponentType(), 0);
 				}
 				property.setValue(obj);
 			}
