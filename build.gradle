@@ -10,6 +10,7 @@ buildscript {
     }
     dependencies {
         classpath "me.champeau.gradle:jmh-gradle-plugin:0.3.1"
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
     }
 }
 
