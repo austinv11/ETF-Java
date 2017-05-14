@@ -15,6 +15,10 @@ buildscript {
 
 apply plugin: 'java'
 apply plugin: "me.champeau.gradle.jmh"
+apply plugin: 'idea'
+apply plugin: 'application'
+apply plugin: 'maven'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 sourceCompatibility = 1.8
 
@@ -30,4 +34,20 @@ dependencies {
     jmh 'org.json:json:20160810'
     jmh 'com.google.code.gson:gson:2.8.0'
     jmh 'com.fasterxml.jackson.module:jackson-module-afterburner:2.8.7'
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+    archives shadowJar
 }
