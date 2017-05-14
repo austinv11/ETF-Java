@@ -47,7 +47,7 @@ public class Mapper {
 						for (int i = 0; i < ((ErlangList) obj).size(); i++) {
 							Object obj1 = ((ErlangList) obj).get(i);
 							if (obj1 != null)
-								Array.set(array, i, obj1 instanceof ErlangMap ? read(data, property.getSetterType().getComponentType()) : obj1);
+								Array.set(array, i, obj1 instanceof ErlangMap ? read((ErlangMap) obj1, property.getSetterType().getComponentType()) : obj1);
 						}
 						obj = array;
 					} else
