@@ -108,3 +108,4 @@ fabric.properties
 # Misc
 src/test/resources/test.etf
 /src/test/resources/test.json
+!/src/main/java/com/austinv11/etf/erlang/

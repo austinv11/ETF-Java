@@ -413,13 +413,13 @@ public class ETFParser {
      * @return The binary data.
      */
     @BertCompatible
-    public byte[] nextBinary() {
+    public String nextBinary() {
         checkPreconditions(BINARY_EXT);
 
         long len = Integer.toUnsignedLong(wrap(data, offset, 4).getInt());
         offset += 4;
 
-        return Arrays.copyOfRange(data, offset, (offset += len));
+        return new String(Arrays.copyOfRange(data, offset, (offset += len)));
     }
 
     /**

@@ -24,9 +24,9 @@ public class ETFTester {
     public static final char[] LIST = {131,108,0,0,0,3,97,1,97,2,97,3,106};
     public static final char[] NIL = {131, 106};
     public static final ETFConfig CONFIG = new ETFConfig()
-            .setIncludeHeader(false)
+            .setIncludeHeader(true)
             .setCompression(false)
-            .setIncludeDistributionHeader(false)
+            .setIncludeDistributionHeader(true)
             .setBert(false)
             .setVersion(ETFConstants.VERSION)
             .setLoqui(true);
@@ -102,7 +102,7 @@ public class ETFTester {
         System.out.println("ETF: ");
         long init = System.currentTimeMillis();
         System.out.println(Arrays.toString(bytes));
-        System.out.println(CONFIG.createParser(bytes, true).nextMap().toString());
+        System.out.println(CONFIG.createParser(bytes).nextMap().toString());
         System.out.println(System.currentTimeMillis() - init);
     }
 
