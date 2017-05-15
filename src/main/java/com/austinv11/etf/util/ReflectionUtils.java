@@ -34,7 +34,7 @@ public class ReflectionUtils {
 		
 		List<PropertyManager> properties = new ArrayList<>();
 		for (Field field : getAllFields(clazz)) {
-			if (!Modifier.isTransient(field.getModifiers())) {
+			if (!Modifier.isTransient(field.getModifiers()) && !Modifier.isFinal(field.getModifiers()) && !Modifier.isStatic(field.getModifiers())) {
 				properties.add(new PropertyManager(instance, field));
 			}
 		}
