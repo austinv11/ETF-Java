@@ -95,6 +95,10 @@ public class ReflectionUtils {
 	}
 	
 	public static void setField(Object instance, Field field, Object value) throws IllegalAccessException {
+		if (value == null && field.getType().isPrimitive()) {
+			return;
+		}
+		
 		if (UNSAFE != null) {
 			if (int.class.equals(field.getType())) {
 				((sun.misc.Unsafe) UNSAFE).putInt(instance, ((sun.misc.Unsafe) UNSAFE).objectFieldOffset(field), (int) value);
