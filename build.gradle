@@ -1,5 +1,5 @@
 group 'com.austinv11.etf'
-version '1.0.0-SNAPSHOT'
+version '2.0.0-SNAPSHOT'
 
 buildscript {
     repositories {
@@ -8,13 +8,9 @@ buildscript {
             url "https://plugins.gradle.org/m2/"
         }
     }
-    dependencies {
-        classpath "me.champeau.gradle:jmh-gradle-plugin:0.3.1"
-    }
 }
 
 apply plugin: 'java'
-apply plugin: "me.champeau.gradle.jmh"
 
 sourceCompatibility = 1.8
 
@@ -23,11 +19,7 @@ repositories {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.11'
-    testCompile 'org.json:json:20160810'
-    testCompile 'com.google.code.gson:gson:2.8.0'
+    implementation 'net.openhft:chronicle-bytes:2.19.32'
 
-    jmh 'org.json:json:20160810'
-    jmh 'com.google.code.gson:gson:2.8.0'
-    jmh 'com.fasterxml.jackson.module:jackson-module-afterburner:2.8.7'
+    testCompile group: 'junit', name: 'junit', version: '4.11'
 }

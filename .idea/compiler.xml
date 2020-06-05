@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel>
-      <module name="ETF-Java_jmh" target="1.8" />
-      <module name="ETF-Java_main" target="1.8" />
-      <module name="ETF-Java_test" target="1.8" />
+    <bytecodeTargetLevel target="1.8">
       <module name="gui_main" target="1.5" />
       <module name="gui_test" target="1.5" />
     </bytecodeTargetLevel>
