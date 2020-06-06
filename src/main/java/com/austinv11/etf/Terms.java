@@ -6,7 +6,9 @@ public final class Terms {
     public static final byte ATOM_CACHE_REF = 82;
     public static final byte SMALL_INTEGER_EXT = 97;
     public static final byte INTEGER_EXT = 98;
+    @Deprecated // deprecated by ETF so we are not using it
     public static final byte FLOAT_EXT = 99;
+    @Deprecated // deprecated for ATOM_UTF8
     public static final byte ATOM_EXT = 100;
     public static final byte REFERENCE_EXT = 101;
     public static final byte PORT_EXT = 102;
@@ -21,6 +23,7 @@ public final class Terms {
     public static final byte SMALL_BIG_EXT = 110;
     public static final byte LARGE_BIG_EXT = 111;
     public static final byte NEW_REFERENCE_EXT = 114;
+    @Deprecated // deprecated for SMALL_ATOM_UTF8
     public static final byte SMALL_ATOM_EXT = 115;
     public static final byte FUN_EXT = 117;
     public static final byte NEW_FUN_EXT = 112;

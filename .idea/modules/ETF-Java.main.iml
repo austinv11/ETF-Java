@@ -5,13 +5,10 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$/../../src/main">
       <sourceFolder url="file://$MODULE_DIR$/../../src/main/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../../src/main/resources" type="java-resource" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Gradle: net.openhft:chronicle-bytes:2.19.32" level="project" />
-    <orderEntry type="library" name="Gradle: net.openhft:chronicle-core:2.19.33" level="project" />
-    <orderEntry type="library" name="Gradle: org.slf4j:slf4j-api:1.7.30" level="project" />
-    <orderEntry type="library" name="Gradle: org.jetbrains:annotations:19.0.0" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-buffer:4.1.50.Final" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-common:4.1.50.Final" level="project" />
   </component>
 </module>
