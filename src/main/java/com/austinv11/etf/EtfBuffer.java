@@ -4,8 +4,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 import java.io.Closeable;
-import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
 import static com.austinv11.etf.Terms.*;
@@ -403,6 +401,67 @@ public class EtfBuffer implements Closeable {
             write(b);
         }
         return this;
+    }
+
+    /**
+     * Writes a signed big integer.
+     * @param l The integer.
+     * @return The buffer for chaining.
+     */
+    public EtfBuffer writeBig(long l) {
+        return writeBig(l, l >= 0);
+    }
+
+    /**
+     * Writes an unsigned big integer.
+     * @param l The integer.
+     * @return The buffer for chaining.
+     */
+    public EtfBuffer writeBigUnsigned(long l) {
+        return writeBig(l, true); // Write as positive
+    }
+
+    // Implementation based on https://github.com/discord/erlpack/blob/master/cpp/encoder.h#L94
+    private EtfBuffer writeBig(long l, boolean isPositive) {
+        // Longs only support 64bit nums so a SMALL_BIG_EXT should work
+        write(SMALL_BIG_EXT);
+        byte[] buf = new byte[2 + 8];  // max size of the buffer, 2 meta bytes + the 8 bytes for a long
+        char bytes = 0;
+
+        while (l != 0) {
+            buf[2 + bytes] = (byte) (l & 0xFF);
+            l >>= 8;
+            bytes++;
+        }
+
+        buf[0] = (byte) bytes;
+        buf[1] = (byte) (isPositive ? 1 : 0);
+
+        buffer.writeBytes(buf, 0, 2 + bytes);
+
+        return this;
+    }
+
+    /**
+     * Reads a big integer.
+     * @return The integer.
+     */
+    public long readBig() {
+        requireType(SMALL_BIG_EXT);
+
+        short n = buffer.readUnsignedByte();
+        byte sign = buffer.readByte();
+
+        long big = 0;
+        for (short i = 0; i < n; i++) {
+            big |= buffer.readByte() << 8 * i;
+        }
+
+        if (big >= 0 && sign == 0) {
+            big *= -1L;
+        }
+
+        return big;
     }
 
     // Loqui (discord) specific differences
